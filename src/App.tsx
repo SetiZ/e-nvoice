@@ -90,19 +90,18 @@ function App() {
       <div className="form-section">
         <div className="glass-card mb-4 flex-between">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
-              <h1>{t.createInvoice}</h1>
-              <button
-                className="webmcp-badge"
-                onClick={() => setShowWebMcpModal(!showWebMcpModal)}
-                title={t.webMcpTooltip}
-              >
-                <Cpu size={14} /> {t.webMcpActive}
-              </button>
-            </div>
+            <h1>{t.createInvoice}</h1>
             <p className="text-secondary">{t.fillDetails}</p>
           </div>
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setShowWebMcpModal(!showWebMcpModal)}
+              title={t.webMcpTooltip}
+              style={{ borderColor: 'rgba(96, 165, 250, 0.4)', color: '#60a5fa' }}
+            >
+              <Cpu size={18} /> WebMCP
+            </button>
             <button
               className="btn btn-secondary"
               onClick={() => setLang(lang === 'en' ? 'fr' : 'en')}
@@ -258,27 +257,37 @@ function App() {
           </div>
         </div>
 
-        {/* WebMCP Tool Inspector Modal */}
+        {/* WebMCP Fixed Overlay Modal */}
         {showWebMcpModal && (
-          <div className="glass-card mb-4">
-            <div className="flex-between mb-4">
-              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Cpu size={18} className="text-primary" /> WebMCP IA API (Browser-Native)
-              </h3>
-              <button className="btn-icon" onClick={() => setShowWebMcpModal(false)}>✕</button>
-            </div>
-            <p className="text-secondary mb-4" style={{ fontSize: '0.875rem' }}>
-              e-nvoice est équipé d'un serveur WebMCP (Model Context Protocol) actif dans le navigateur. Les agents IA et extensions peuvent interagir en direct via <code>window.mcp</code> ou <code>postMessage</code> JSON-RPC.
-            </p>
-            <div className="webmcp-tools-list">
-              {WEBMCP_TOOLS.map(tool => (
-                <div key={tool.name} className="webmcp-tool-card">
-                  <code>{tool.name}</code>
-                  <p className="text-secondary" style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>
-                    {tool.description}
-                  </p>
-                </div>
-              ))}
+          <div className="modal-backdrop" onClick={() => setShowWebMcpModal(false)}>
+            <div className="modal-container" onClick={e => e.stopPropagation()}>
+              <div className="flex-between mb-4">
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Cpu size={18} className="text-primary" /> WebMCP IA API (Browser-Native)
+                </h3>
+                <button className="btn-icon" onClick={() => setShowWebMcpModal(false)}>✕</button>
+              </div>
+              <p className="text-secondary mb-4" style={{ fontSize: '0.875rem' }}>
+                e-nvoice est équipé d'un serveur WebMCP (Model Context Protocol) actif dans le navigateur. Les agents IA et extensions peuvent interagir en direct via <code>window.mcp</code> ou <code>postMessage</code> JSON-RPC.
+              </p>
+              <div className="webmcp-tools-list mb-4">
+                {WEBMCP_TOOLS.map(tool => (
+                  <div key={tool.name} className="webmcp-tool-card">
+                    <code>{tool.name}</code>
+                    <p className="text-secondary" style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                      {tool.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <div style={{ background: '#0f172a', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid #334155' }}>
+                <p className="text-secondary" style={{ fontSize: '0.75rem', marginBottom: '0.35rem', fontWeight: 600 }}>
+                  💡 Tester dans la console DevTools (F12) :
+                </p>
+                <code style={{ color: '#60a5fa', fontSize: '0.75rem', wordBreak: 'break-all' }}>
+                  await window.mcp.callTool('calculate_invoice_totals', &#123; items: [&#123; quantity: 2, unitPrice: 500, vatRate: 20 &#125;] &#125;)
+                </code>
+              </div>
             </div>
           </div>
         )}
