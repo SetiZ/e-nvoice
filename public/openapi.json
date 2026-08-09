@@ -1,0 +1,27 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "e-nvoice Factur-X Generator & Validator API",
+    "description": "API for validating Factur-X / EN 16931 invoice data and calculating totals",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://setiz.github.io/e-nvoice",
+      "description": "GitHub Pages Static Server"
+    }
+  ],
+  "paths": {
+    "/.well-known/mcp.json": {
+      "get": {
+        "summary": "Get MCP Tool Definitions Manifest",
+        "operationId": "getMcpManifest",
+        "responses": {
+          "200": {
+            "description": "MCP Manifest JSON"
+          }
+        }
+      }
+    }
+  }
+}

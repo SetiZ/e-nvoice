@@ -417,6 +417,51 @@ input::placeholder, textarea::placeholder {
   to { transform: scale(1); opacity: 1; }
 }
 
+.webmcp-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.webmcp-tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.375rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.webmcp-tab-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.webmcp-tab-btn.active {
+  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.15);
+  font-weight: 600;
+}
+
+.code-block {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 0.5rem;
+  padding: 0.85rem;
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #93c5fd;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  margin-top: 0.5rem;
+  line-height: 1.4;
+}
+
 .webmcp-tools-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

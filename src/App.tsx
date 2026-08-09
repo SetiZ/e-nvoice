@@ -30,6 +30,7 @@ function App() {
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [showWebMcpModal, setShowWebMcpModal] = useState(false);
+  const [activeWebMcpTab, setActiveWebMcpTab] = useState<'tools' | 'devtools' | 'ai'>('tools');
   const [lang, setLang] = useState<Language>('fr');
   const t = translations[lang];
 
@@ -263,31 +264,128 @@ function App() {
             <div className="modal-container" onClick={e => e.stopPropagation()}>
               <div className="flex-between mb-4">
                 <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Cpu size={18} className="text-primary" /> WebMCP IA API (Browser-Native)
+                  <Cpu size={18} className="text-primary" /> WebMCP IA API & Guide de Connexion
                 </h3>
                 <button className="btn-icon" onClick={() => setShowWebMcpModal(false)}>✕</button>
               </div>
-              <p className="text-secondary mb-4" style={{ fontSize: '0.875rem' }}>
-                e-nvoice est équipé d'un serveur WebMCP (Model Context Protocol) actif dans le navigateur. Les agents IA et extensions peuvent interagir en direct via <code>window.mcp</code> ou <code>postMessage</code> JSON-RPC.
-              </p>
-              <div className="webmcp-tools-list mb-4">
-                {WEBMCP_TOOLS.map(tool => (
-                  <div key={tool.name} className="webmcp-tool-card">
-                    <code>{tool.name}</code>
-                    <p className="text-secondary" style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>
-                      {tool.description}
+
+              {/* Navigation Tabs */}
+              <div className="webmcp-tabs">
+                <button
+                  className={`webmcp-tab-btn ${activeWebMcpTab === 'tools' ? 'active' : ''}`}
+                  onClick={() => setActiveWebMcpTab('tools')}
+                >
+                  🛠️ Outils ({WEBMCP_TOOLS.length})
+                </button>
+                <button
+                  className={`webmcp-tab-btn ${activeWebMcpTab === 'devtools' ? 'active' : ''}`}
+                  onClick={() => setActiveWebMcpTab('devtools')}
+                >
+                  💻 JS / DevTools
+                </button>
+                <button
+                  className={`webmcp-tab-btn ${activeWebMcpTab === 'ai' ? 'active' : ''}`}
+                  onClick={() => setActiveWebMcpTab('ai')}
+                >
+                  🤖 ChatGPT / Claude / Cursor
+                </button>
+              </div>
+
+              {/* Tab 1: Available Tools */}
+              {activeWebMcpTab === 'tools' && (
+                <div>
+                  <p className="text-secondary mb-4" style={{ fontSize: '0.875rem' }}>
+                    Le serveur WebMCP expose ces fonctions directement dans le navigateur pour valider, calculer et générer vos factures.
+                  </p>
+                  <div className="webmcp-tools-list">
+                    {WEBMCP_TOOLS.map(tool => (
+                      <div key={tool.name} className="webmcp-tool-card">
+                        <code>{tool.name}</code>
+                        <p className="text-secondary" style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                          {tool.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 2: JavaScript & Console */}
+              {activeWebMcpTab === 'devtools' && (
+                <div>
+                  <p className="text-secondary mb-2" style={{ fontSize: '0.875rem' }}>
+                    <strong>1. Directement dans window.mcp (DevTools / Extensions) :</strong>
+                  </p>
+                  <pre className="code-block">
+{`// Calculer les totaux de facture
+await window.mcp.callTool('calculate_invoice_totals', {
+  items: [{ quantity: 2, unitPrice: 500, vatRate: 20 }]
+});`}
+                  </pre>
+
+                  <p className="text-secondary mt-4 mb-2" style={{ fontSize: '0.875rem' }}>
+                    <strong>2. Via window.postMessage (JSON-RPC 2.0) :</strong>
+                  </p>
+                  <pre className="code-block">
+{`window.postMessage({
+  jsonrpc: '2.0',
+  id: 1,
+  method: 'tools/call',
+  params: {
+    name: 'validate_invoice_data',
+    arguments: { number: 'INV-001', date: '2026-08-09', sellerName: 'Ma Sté', buyerName: 'Client' }
+  }
+}, '*');`}
+                  </pre>
+                </div>
+              )}
+
+              {/* Tab 3: AI Chat Integration */}
+              {activeWebMcpTab === 'ai' && (
+                <div>
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
+                      🟢 Pour ChatGPT (Actions GPT Personnalisées) :
+                    </p>
+                    <p className="text-secondary" style={{ fontSize: '0.85rem' }}>
+                      Créez un GPT dans ChatGPT → Configurer → <strong>Ajouter une action</strong> → Importer cette URL :
+                    </p>
+                    <pre className="code-block">
+https://setiz.github.io/e-nvoice/openapi.json
+                    </pre>
+                  </div>
+
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
+                      🟠 Pour Claude Desktop / Cursor AI :
+                    </p>
+                    <p className="text-secondary" style={{ fontSize: '0.85rem' }}>
+                      Ajoutez cette configuration dans votre <code>claude_desktop_config.json</code> ou les réglages MCP de Cursor :
+                    </p>
+                    <pre className="code-block">
+{`{
+  "mcpServers": {
+    "e-nvoice": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch", "https://setiz.github.io/e-nvoice/llms.txt"]
+    }
+  }
+}`}
+                    </pre>
+                  </div>
+
+                  <div>
+                    <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
+                      📄 Manifestes de Découverte IA :
+                    </p>
+                    <p className="text-secondary" style={{ fontSize: '0.85rem' }}>
+                      • MCP Manifest : <code>https://setiz.github.io/e-nvoice/.well-known/mcp.json</code><br />
+                      • LLM Index : <code>https://setiz.github.io/e-nvoice/llms.txt</code>
                     </p>
                   </div>
-                ))}
-              </div>
-              <div style={{ background: '#0f172a', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid #334155' }}>
-                <p className="text-secondary" style={{ fontSize: '0.75rem', marginBottom: '0.35rem', fontWeight: 600 }}>
-                  💡 Tester dans la console DevTools (F12) :
-                </p>
-                <code style={{ color: '#60a5fa', fontSize: '0.75rem', wordBreak: 'break-all' }}>
-                  await window.mcp.callTool('calculate_invoice_totals', &#123; items: [&#123; quantity: 2, unitPrice: 500, vatRate: 20 &#125;] &#125;)
-                </code>
-              </div>
+                </div>
+              )}
+
             </div>
           </div>
         )}
