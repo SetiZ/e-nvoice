@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Plus, Trash2, Download, CheckCircle, Globe } from 'lucide-react';
+import { Plus, Trash2, Download, CheckCircle, Globe, Cpu, HelpCircle } from 'lucide-react';
 import type { Invoice, Party, LineItem } from './types.ts';
 import { generateFacturX } from './utils/pdfGenerator.ts';
 import { translations, type Language } from './i18n.ts';
+import { WEBMCP_TOOLS } from './utils/webMcp.ts';
 import './index.css';
 
 const initialParty: Party = {
@@ -28,6 +29,7 @@ function App() {
   }));
 
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showWebMcpModal, setShowWebMcpModal] = useState(false);
   const [lang, setLang] = useState<Language>('fr');
   const t = translations[lang];
 
@@ -88,7 +90,16 @@ function App() {
       <div className="form-section">
         <div className="glass-card mb-4 flex-between">
           <div>
-            <h1>{t.createInvoice}</h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
+              <h1>{t.createInvoice}</h1>
+              <button
+                className="webmcp-badge"
+                onClick={() => setShowWebMcpModal(!showWebMcpModal)}
+                title={t.webMcpTooltip}
+              >
+                <Cpu size={14} /> {t.webMcpActive}
+              </button>
+            </div>
             <p className="text-secondary">{t.fillDetails}</p>
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
@@ -246,6 +257,52 @@ function App() {
             ))}
           </div>
         </div>
+
+        {/* WebMCP Tool Inspector Modal */}
+        {showWebMcpModal && (
+          <div className="glass-card mb-4">
+            <div className="flex-between mb-4">
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Cpu size={18} className="text-primary" /> WebMCP IA API (Browser-Native)
+              </h3>
+              <button className="btn-icon" onClick={() => setShowWebMcpModal(false)}>✕</button>
+            </div>
+            <p className="text-secondary mb-4" style={{ fontSize: '0.875rem' }}>
+              e-nvoice est équipé d'un serveur WebMCP (Model Context Protocol) actif dans le navigateur. Les agents IA et extensions peuvent interagir en direct via <code>window.mcp</code> ou <code>postMessage</code> JSON-RPC.
+            </p>
+            <div className="webmcp-tools-list">
+              {WEBMCP_TOOLS.map(tool => (
+                <div key={tool.name} className="webmcp-tool-card">
+                  <code>{tool.name}</code>
+                  <p className="text-secondary" style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                    {tool.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* AEO / FAQ Section */}
+        <section className="faq-section">
+          <div className="glass-card">
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+              <HelpCircle size={20} className="text-primary" /> {t.faqTitle}
+            </h2>
+            <details className="faq-card" open>
+              <summary>{t.faq1Q}</summary>
+              <p>{t.faq1A}</p>
+            </details>
+            <details className="faq-card">
+              <summary>{t.faq2Q}</summary>
+              <p>{t.faq2A}</p>
+            </details>
+            <details className="faq-card">
+              <summary>{t.faq3Q}</summary>
+              <p>{t.faq3A}</p>
+            </details>
+          </div>
+        </section>
 
       </div>
 

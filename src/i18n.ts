@@ -35,7 +35,16 @@ export const translations = {
     totalAmountDue: 'Total Amount Due',
     yourCompanyPlaceholder: 'Your Company',
     clientNamePlaceholder: 'Client Name',
-    facturxNote: 'This invoice is generated according to the Factur-X / EN 16931 standard.'
+    facturxNote: 'This invoice is generated according to the Factur-X / EN 16931 standard.',
+    webMcpActive: 'WebMCP IA Ready',
+    webMcpTooltip: 'In-browser Model Context Protocol server active (window.mcp & postMessage)',
+    faqTitle: 'Frequently Asked Questions (Factur-X & WebMCP)',
+    faq1Q: 'What is Factur-X / EN 16931?',
+    faq1A: 'Factur-X is a hybrid electronic invoice format combining a PDF (PDF/A-3) and structured XML data (EN 16931) for automated accounting.',
+    faq2Q: 'Is my invoice data private?',
+    faq2A: 'Yes, 100%. All PDF/XML generation occurs inside your browser. No server calls, no trackers, zero data collection.',
+    faq3Q: 'What is WebMCP?',
+    faq3A: 'WebMCP exposes browser-native tools (window.mcp & postMessage JSON-RPC) allowing AI assistants to validate or create invoices automatically.'
   },
   fr: {
     createInvoice: 'Créer une Facture',
@@ -73,7 +82,16 @@ export const translations = {
     totalAmountDue: 'Montant Total TTC',
     yourCompanyPlaceholder: 'Votre Entreprise',
     clientNamePlaceholder: 'Nom du Client',
-    facturxNote: 'Cette facture est générée selon la norme Factur-X / EN 16931.'
+    facturxNote: 'Cette facture est générée selon la norme Factur-X / EN 16931.',
+    webMcpActive: 'WebMCP IA Actif',
+    webMcpTooltip: 'Serveur Model Context Protocol actif dans le navigateur (window.mcp & postMessage)',
+    faqTitle: 'Foire Aux Questions (Factur-X & WebMCP)',
+    faq1Q: 'Qu\'est-ce que la norme Factur-X / EN 16931 ?',
+    faq1A: 'Factur-X est un format de facture électronique hybride combinant un PDF (PDF/A-3) et des données XML structurées (EN 16931) pour le traitement comptable automatisé.',
+    faq2Q: 'Mes données de facturation sont-elles protégées ?',
+    faq2A: 'Oui, à 100%. La génération PDF et XML s\'effectue exclusivement dans votre navigateur. Aucun appel serveur, aucun traqueur.',
+    faq3Q: 'Qu\'est-ce que WebMCP ?',
+    faq3A: 'WebMCP expose des outils natifs dans le navigateur (window.mcp et postMessage JSON-RPC) permettant aux assistants IA de valider ou pré-remplir vos factures.'
   }
 };
 

@@ -5,7 +5,98 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>e-nvoice</title>
+  
+  <!-- Primary SEO -->
+  <title>e-nvoice - Générateur Gratuit Factur-X & EN 16931 (Conforme Réforme 2026)</title>
+  <meta name="title" content="e-nvoice - Générateur Gratuit Factur-X & EN 16931 (Conforme Réforme 2026)" />
+  <meta name="description" content="Créez et téléchargez gratuitement vos factures électroniques au format Factur-X / EN 16931 (PDF/A-3 + XML). 100% sécurisé et traité localement dans votre navigateur, sans aucun serveur." />
+  <meta name="keywords" content="factur-x, facture electronique 2026, en 16931, pdf a3 xml, générateur factur-x gratuit, reforme facturation france, webmcp, aeo, geo, facturation confidentielle" />
+  <meta name="author" content="e-nvoice" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://setiz.github.io/e-nvoice/" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://setiz.github.io/e-nvoice/" />
+  <meta property="og:title" content="e-nvoice - Générateur Gratuit de Factures Factur-X & EN 16931" />
+  <meta property="og:description" content="Générez instantanément des factures électroniques conforme Factur-X (PDF/A-3 + XML). Gratuit, sécurisé et 100% côté client." />
+  <meta property="og:site_name" content="e-nvoice" />
+  <meta property="og:locale" content="fr_FR" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://setiz.github.io/e-nvoice/" />
+  <meta property="twitter:title" content="e-nvoice - Générateur Gratuit Factur-X / EN 16931" />
+  <meta property="twitter:description" content="Générez vos factures électroniques au format Factur-X (PDF/A-3 hybride). Client-side et confidentiel." />
+
+  <!-- AI / AEO / GEO Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://setiz.github.io/e-nvoice/#webapp",
+        "name": "e-nvoice",
+        "url": "https://setiz.github.io/e-nvoice/",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "All",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR"
+        },
+        "description": "Générateur de factures électroniques conforme à la norme hybride Factur-X / EN 16931. Produit des fichiers PDF/A-3 contenant le XML UN/CEFACT CrossIndustryInvoice.",
+        "browserRequirements": "Requires JavaScript. Works in Chrome, Firefox, Safari, Edge.",
+        "softwareRequirements": "No installation required. Runs entirely client-side.",
+        "featureList": [
+          "Génération conforme Factur-X (Basic / EN 16931)",
+          "Inclusion automatique des métadonnées XML UN/CEFACT",
+          "Traitement 100% local dans le navigateur (Zéro serveur)",
+          "Interface WebMCP pour l'automatisation par Agents IA"
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://setiz.github.io/e-nvoice/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Qu'est-ce qu'une facture Factur-X ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Factur-X est un standard de facture électronique hybride franco-allemand. Il associe un fichier PDF lisible par l'humain (au format PDF/A-3) et un fichier XML structuré (norme EN 16931) intégrable automatiquement par les logiciels comptables."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "e-nvoice est-il conforme à la réforme de la facturation électronique 2026 en France ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Oui. e-nvoice génère le profil conforme EN 16931 du standard Factur-X avec le schéma XML CrossIndustryInvoice v100 requis pour la facturation inter-entreprises (B2B)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Mes données financières ou personnelles sont-elles enregistrées ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Absolument pas. Tout le traitement et la génération du fichier PDF/XML s'effectuent localement dans votre navigateur grâce au JavaScript. Aucune donnée n'est envoyée à un serveur tiers."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Qu'est-ce que la compatibilité WebMCP d'e-nvoice ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "e-nvoice expose un serveur WebMCP (Model Context Protocol) côté client dans le navigateur. Cela permet aux agents IA (comme Claude, ChatGPT, Chrome AI) d'interagir directement avec l'application pour valider ou pré-remplir des factures."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 
 <body>

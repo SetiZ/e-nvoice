@@ -1,0 +1,77 @@
+{
+  "name": "e-nvoice WebMCP Server",
+  "description": "Browser-native WebMCP server for creating and validating Factur-X / EN 16931 invoices",
+  "version": "1.0.0",
+  "protocolVersion": "2024-11-05",
+  "transport": "window.postMessage",
+  "tools": [
+    {
+      "name": "calculate_invoice_totals",
+      "description": "Calculates subtotal HT, VAT per rate, and total TTC for a given set of invoice items",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "quantity": { "type": "number" },
+                "unitPrice": { "type": "number" },
+                "vatRate": { "type": "number" }
+              },
+              "required": ["quantity", "unitPrice", "vatRate"]
+            }
+          }
+        },
+        "required": ["items"]
+      }
+    },
+    {
+      "name": "validate_invoice_data",
+      "description": "Validates if invoice data contains required mandatory fields for Factur-X EN 16931 compliance",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "number": { "type": "string" },
+          "date": { "type": "string" },
+          "seller": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "siret": { "type": "string" }
+            },
+            "required": ["name"]
+          },
+          "buyer": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" }
+            },
+            "required": ["name"]
+          },
+          "items": {
+            "type": "array"
+          }
+        },
+        "required": ["number", "date", "seller", "buyer", "items"]
+      }
+    },
+    {
+      "name": "generate_facturx_invoice",
+      "description": "Generates and triggers download of a Factur-X PDF/A-3 file with XML metadata",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "number": { "type": "string" },
+          "date": { "type": "string" },
+          "dueDate": { "type": "string" },
+          "seller": { "type": "object" },
+          "buyer": { "type": "object" },
+          "items": { "type": "array" }
+        },
+        "required": ["number", "date", "seller", "buyer", "items"]
+      }
+    }
+  ]
+}
