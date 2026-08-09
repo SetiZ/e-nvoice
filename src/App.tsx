@@ -30,7 +30,7 @@ function App() {
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [showWebMcpModal, setShowWebMcpModal] = useState(false);
-  const [activeWebMcpTab, setActiveWebMcpTab] = useState<'tools' | 'devtools' | 'ai'>('tools');
+  const [activeWebMcpTab, setActiveWebMcpTab] = useState<'tools' | 'connect'>('tools');
   const [lang, setLang] = useState<Language>('fr');
   const t = translations[lang];
 
@@ -275,19 +275,13 @@ function App() {
                   className={`webmcp-tab-btn ${activeWebMcpTab === 'tools' ? 'active' : ''}`}
                   onClick={() => setActiveWebMcpTab('tools')}
                 >
-                  🛠️ Outils ({WEBMCP_TOOLS.length})
+                  🛠️ Outils WebMCP ({WEBMCP_TOOLS.length})
                 </button>
                 <button
-                  className={`webmcp-tab-btn ${activeWebMcpTab === 'devtools' ? 'active' : ''}`}
-                  onClick={() => setActiveWebMcpTab('devtools')}
+                  className={`webmcp-tab-btn ${activeWebMcpTab === 'connect' ? 'active' : ''}`}
+                  onClick={() => setActiveWebMcpTab('connect')}
                 >
-                  💻 JS / DevTools
-                </button>
-                <button
-                  className={`webmcp-tab-btn ${activeWebMcpTab === 'ai' ? 'active' : ''}`}
-                  onClick={() => setActiveWebMcpTab('ai')}
-                >
-                  🤖 ChatGPT / Claude / Cursor
+                  🌐 Connexion Web & ChatGPT
                 </button>
               </div>
 
@@ -310,23 +304,26 @@ function App() {
                 </div>
               )}
 
-              {/* Tab 2: JavaScript & Console */}
-              {activeWebMcpTab === 'devtools' && (
+              {/* Tab 2: Web & ChatGPT Integration */}
+              {activeWebMcpTab === 'connect' && (
                 <div>
-                  <p className="text-secondary mb-2" style={{ fontSize: '0.875rem' }}>
-                    <strong>1. Directement dans window.mcp (DevTools / Extensions) :</strong>
-                  </p>
-                  <pre className="code-block">
-{`// Calculer les totaux de facture
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
+                      1. Dans la console JS ou Extension Navigateur (window.mcp) :
+                    </p>
+                    <pre className="code-block">
+{`// Appeler un outil WebMCP directement dans la page
 await window.mcp.callTool('calculate_invoice_totals', {
   items: [{ quantity: 2, unitPrice: 500, vatRate: 20 }]
 });`}
-                  </pre>
+                    </pre>
+                  </div>
 
-                  <p className="text-secondary mt-4 mb-2" style={{ fontSize: '0.875rem' }}>
-                    <strong>2. Via window.postMessage (JSON-RPC 2.0) :</strong>
-                  </p>
-                  <pre className="code-block">
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
+                      2. Via window.postMessage (JSON-RPC 2.0) :
+                    </p>
+                    <pre className="code-block">
 {`window.postMessage({
   jsonrpc: '2.0',
   id: 1,
@@ -336,51 +333,28 @@ await window.mcp.callTool('calculate_invoice_totals', {
     arguments: { number: 'INV-001', date: '2026-08-09', sellerName: 'Ma Sté', buyerName: 'Client' }
   }
 }, '*');`}
-                  </pre>
-                </div>
-              )}
+                    </pre>
+                  </div>
 
-              {/* Tab 3: AI Chat Integration */}
-              {activeWebMcpTab === 'ai' && (
-                <div>
                   <div style={{ marginBottom: '1.25rem' }}>
                     <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
-                      🟢 Pour ChatGPT (Actions GPT Personnalisées) :
+                      3. Pour ChatGPT (Actions GPT Personnalisées) :
                     </p>
                     <p className="text-secondary" style={{ fontSize: '0.85rem' }}>
-                      Créez un GPT dans ChatGPT → Configurer → <strong>Ajouter une action</strong> → Importer cette URL :
+                      ChatGPT → Configurer → <strong>Ajouter une action</strong> → Importer cette URL :
                     </p>
                     <pre className="code-block">
 https://setiz.github.io/e-nvoice/openapi.json
                     </pre>
                   </div>
 
-                  <div style={{ marginBottom: '1.25rem' }}>
-                    <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
-                      🟠 Pour Claude Desktop / Cursor AI :
-                    </p>
-                    <p className="text-secondary" style={{ fontSize: '0.85rem' }}>
-                      Ajoutez cette configuration dans votre <code>claude_desktop_config.json</code> ou les réglages MCP de Cursor :
-                    </p>
-                    <pre className="code-block">
-{`{
-  "mcpServers": {
-    "e-nvoice": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch", "https://setiz.github.io/e-nvoice/llms.txt"]
-    }
-  }
-}`}
-                    </pre>
-                  </div>
-
                   <div>
                     <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
-                      📄 Manifestes de Découverte IA :
+                      📄 Index & Découverte par Moteurs IA (AEO/GEO) :
                     </p>
                     <p className="text-secondary" style={{ fontSize: '0.85rem' }}>
-                      • MCP Manifest : <code>https://setiz.github.io/e-nvoice/.well-known/mcp.json</code><br />
-                      • LLM Index : <code>https://setiz.github.io/e-nvoice/llms.txt</code>
+                      • Manifeste MCP : <code>https://setiz.github.io/e-nvoice/.well-known/mcp.json</code><br />
+                      • Fichier LLM : <code>https://setiz.github.io/e-nvoice/llms.txt</code>
                     </p>
                   </div>
                 </div>
