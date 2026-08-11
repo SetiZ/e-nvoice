@@ -1,6 +1,22 @@
 import type { Invoice } from '../types.ts';
-import { generateFacturXXml } from './facturx.ts';
-import { generateFacturX } from './pdfGenerator.ts';
+
+// Lazy load PDF generator
+let generateFacturXPromise: Promise<any> | null = null;
+const getGenerateFacturX = async () => {
+  if (!generateFacturXPromise) {
+    generateFacturXPromise = import('./pdfGenerator.ts').then(m => m.generateFacturX);
+  }
+  return generateFacturXPromise;
+};
+
+// Lazy load Factur-X XML generator
+let generateFacturXXmlPromise: Promise<any> | null = null;
+const getGenerateFacturXXml = async () => {
+  if (!generateFacturXXmlPromise) {
+    generateFacturXXmlPromise = import('./facturx.ts').then(m => m.generateFacturXXml);
+  }
+  return generateFacturXXmlPromise;
+};
 
 export interface WebMcpTool {
   name: string;
@@ -130,6 +146,7 @@ export class WebMcpServer {
 
       case 'generate_facturx_xml': {
         const invoice = args.invoice as Invoice;
+        const generateFacturXXml = await getGenerateFacturXXml();
         const xml = generateFacturXXml(invoice);
         return { xml, format: 'CrossIndustryInvoice D16B / EN 16931' };
       }
@@ -137,6 +154,7 @@ export class WebMcpServer {
       case 'generate_facturx_invoice': {
         const invoice = args.invoice as Invoice;
         const lang = (args.lang || 'fr') as 'fr' | 'en';
+        const generateFacturX = await getGenerateFacturX();
         await generateFacturX(invoice, lang);
         return { success: true, message: 'Factur-X PDF generated and download triggered.' };
       }

@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import { Plus, Trash2, Download, CheckCircle, Globe, Cpu, HelpCircle } from 'lucide-react';
 import type { Invoice, Party, LineItem } from './types.ts';
-import { generateFacturX } from './utils/pdfGenerator.ts';
 import { translations, type Language } from './i18n.ts';
 import { WEBMCP_TOOLS } from './utils/webMcp.ts';
 import './index.css';
+
+// Lazy load PDF generator - libraries will be in separate chunk
+const loadPdfGenerator = async () => {
+  const { generateFacturX } = await import('./utils/pdfGenerator.ts');
+  return generateFacturX;
+};
 
 const initialParty: Party = {
   name: '',
@@ -78,6 +83,8 @@ function App() {
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
+      // Lazy load PDF libraries only when needed
+      const generateFacturX = await loadPdfGenerator();
       await generateFacturX(invoice, lang);
     } catch (error) {
       console.error('Failed to generate Factur-X', error);
