@@ -1,27 +1,109 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "e-nvoice Factur-X Generator & Validator API",
-    "description": "API for validating Factur-X / EN 16931 invoice data and calculating totals",
-    "version": "1.0.0"
+    "title": "e-nvoice Factur-X Generator & Validator API (Beta)",
+    "description": "Client-side WebMCP API for generating and validating Factur-X / EN 16931 electronic invoices. Note: This is a client-side only API accessible via window.mcp in the browser. External HTTP calls will not work.",
+    "version": "1.0.0-beta",
+    "contact": {
+      "name": "e-nvoice",
+      "url": "https://github.com/SetiZ/e-nvoice"
+    },
+    "license": {
+      "name": "MIT"
+    }
   },
   "servers": [
     {
       "url": "https://setiz.github.io/e-nvoice",
-      "description": "GitHub Pages Static Server"
+      "description": "GitHub Pages Static Server - Access API via window.mcp in browser"
     }
   ],
   "paths": {
     "/.well-known/mcp.json": {
       "get": {
         "summary": "Get MCP Tool Definitions Manifest",
+        "description": "Returns the MCP server manifest with all available tools and their schemas",
         "operationId": "getMcpManifest",
         "responses": {
           "200": {
-            "description": "MCP Manifest JSON"
+            "description": "MCP Manifest JSON with tool definitions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "description": { "type": "string" },
+                    "version": { "type": "string" },
+                    "protocolVersion": { "type": "string" },
+                    "transport": { "type": "string" },
+                    "tools": {
+                      "type": "array",
+                      "items": { "type": "object" }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     }
-  }
+  },
+  "components": {
+    "schemas": {
+      "Invoice": {
+        "type": "object",
+        "properties": {
+          "number": { "type": "string", "description": "Invoice number" },
+          "date": { "type": "string", "format": "date", "description": "Invoice issue date" },
+          "dueDate": { "type": "string", "format": "date", "description": "Payment due date" },
+          "seller": { "$ref": "#/components/schemas/Party" },
+          "buyer": { "$ref": "#/components/schemas/Party" },
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LineItem" }
+          }
+        },
+        "required": ["number", "date", "seller", "buyer", "items"]
+      },
+      "Party": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "address": { "type": "string" },
+          "city": { "type": "string" },
+          "zip": { "type": "string" },
+          "country": { "type": "string", "default": "FR" },
+          "siret": { "type": "string" },
+          "vatNumber": { "type": "string" }
+        },
+        "required": ["name"]
+      },
+      "LineItem": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string" },
+          "quantity": { "type": "number", "minimum": 0 },
+          "unitPrice": { "type": "number", "minimum": 0 },
+          "vatRate": { "type": "number", "minimum": 0, "maximum": 100 }
+        },
+        "required": ["description", "quantity", "unitPrice", "vatRate"]
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Factur-X",
+      "description": "Factur-X / EN 16931 electronic invoice operations"
+    },
+    {
+      "name": "Validation",
+      "description": "Invoice data validation operations"
+    },
+    {
+      "name": "Calculation",
+      "description": "Invoice totals calculation operations"
+    }
+  ]
 }

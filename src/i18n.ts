@@ -38,13 +38,18 @@ export const translations = {
     facturxNote: 'This invoice is generated according to the Factur-X / EN 16931 standard.',
     webMcpActive: 'WebMCP IA Ready',
     webMcpTooltip: 'In-browser Model Context Protocol server active (window.mcp & postMessage)',
+    selectMethod: 'Select your method',
     faqTitle: 'Frequently Asked Questions (Factur-X & WebMCP)',
     faq1Q: 'What is Factur-X / EN 16931?',
     faq1A: 'Factur-X is a hybrid electronic invoice format combining a PDF (PDF/A-3) and structured XML data (EN 16931) for automated accounting.',
     faq2Q: 'Is my invoice data private?',
     faq2A: 'Yes, 100%. All PDF/XML generation occurs inside your browser. No server calls, no trackers, zero data collection.',
     faq3Q: 'What is WebMCP?',
-    faq3A: 'WebMCP exposes browser-native tools (window.mcp & postMessage JSON-RPC) allowing AI assistants to validate or create invoices automatically.'
+    faq3A: 'WebMCP exposes browser-native tools (window.mcp & postMessage JSON-RPC) allowing AI assistants to validate or create invoices automatically.',
+    faq4Q: 'Are invoices compatible with Chorus Pro?',
+    faq4A: 'Yes! e-nvoice generates Factur-X / EN 16931 invoices that are fully compatible with Chorus Pro. You can manually upload the generated PDF to the Chorus Pro portal, or transmit it via their API or a PDP (Partner Dematerialization Platform).',
+    faq5Q: 'How do I use e-nvoice with AI assistants?',
+    faq5A: 'e-nvoice exposes a WebMCP server in your browser. AI assistants can use window.mcp.callTool() to generate, validate, or calculate invoices. See the WebMCP modal in the app for platform-specific instructions (Claude, Gemini, ChatGPT, etc.).'
   },
   fr: {
     createInvoice: 'Créer une Facture',
@@ -85,13 +90,18 @@ export const translations = {
     facturxNote: 'Cette facture est générée selon la norme Factur-X / EN 16931.',
     webMcpActive: 'WebMCP IA Actif',
     webMcpTooltip: 'Serveur Model Context Protocol actif dans le navigateur (window.mcp & postMessage)',
+    selectMethod: 'Sélectionnez votre méthode',
     faqTitle: 'Foire Aux Questions (Factur-X & WebMCP)',
     faq1Q: 'Qu\'est-ce que la norme Factur-X / EN 16931 ?',
     faq1A: 'Factur-X est un format de facture électronique hybride combinant un PDF (PDF/A-3) et des données XML structurées (EN 16931) pour le traitement comptable automatisé.',
     faq2Q: 'Mes données de facturation sont-elles protégées ?',
     faq2A: 'Oui, à 100%. La génération PDF et XML s\'effectue exclusivement dans votre navigateur. Aucun appel serveur, aucun traqueur.',
     faq3Q: 'Qu\'est-ce que WebMCP ?',
-    faq3A: 'WebMCP expose des outils natifs dans le navigateur (window.mcp et postMessage JSON-RPC) permettant aux assistants IA de valider ou pré-remplir vos factures.'
+    faq3A: 'WebMCP expose des outils natifs dans le navigateur (window.mcp et postMessage JSON-RPC) permettant aux assistants IA de valider ou pré-remplir vos factures.',
+    faq4Q: 'Les factures sont-elles compatibles avec Chorus Pro ?',
+    faq4A: 'Oui ! e-nvoice génère des factures Factur-X / EN 16931 entièrement compatibles avec Chorus Pro. Vous pouvez télécharger manuellement le PDF généré sur le portail Chorus Pro, ou le transmettre via leur API ou une PDP (Plateforme de Dématérialisation Partenaire).',
+    faq5Q: 'Comment utiliser e-nvoice avec les assistants IA ?',
+    faq5A: 'e-nvoice expose un serveur WebMCP directement dans votre navigateur. Les assistants IA peuvent utiliser window.mcp.callTool() pour générer, valider ou calculer des factures. Consultez la modale WebMCP dans l\'application pour des instructions spécifiques par plateforme (Claude, Gemini, ChatGPT, etc.).'
   }
 };
 

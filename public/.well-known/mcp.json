@@ -72,6 +72,17 @@
         },
         "required": ["number", "date", "seller", "buyer", "items"]
       }
+    },
+    {
+      "name": "generate_facturx_xml",
+      "description": "Generates raw Factur-X / EN 16931 XML string (UN/CEFACT CrossIndustryInvoice D16B)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "invoice": { "type": "object" }
+        },
+        "required": ["invoice"]
+      }
     }
   ]
 }

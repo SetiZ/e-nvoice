@@ -50,14 +50,15 @@
           "price": "0",
           "priceCurrency": "EUR"
         },
-        "description": "Générateur de factures électroniques conforme à la norme hybride Factur-X / EN 16931. Produit des fichiers PDF/A-3 contenant le XML UN/CEFACT CrossIndustryInvoice.",
+        "description": "Générateur de factures électroniques conforme à la norme hybride Factur-X / EN 16931. Produit des fichiers PDF/A-3 contenant le XML UN/CEFACT CrossIndustryInvoice. Intègre une API WebMCP (bêta) pour l'automatisation côté client.",
         "browserRequirements": "Requires JavaScript. Works in Chrome, Firefox, Safari, Edge.",
         "softwareRequirements": "No installation required. Runs entirely client-side.",
         "featureList": [
           "Génération conforme Factur-X (Basic / EN 16931)",
           "Inclusion automatique des métadonnées XML UN/CEFACT",
           "Traitement 100% local dans le navigateur (Zéro serveur)",
-          "Interface WebMCP pour l'automatisation par Agents IA"
+          "API WebMCP (Beta) pour automatisation côté client",
+          "Factures compatibles avec Chorus Pro (B2B/B2G 2026)"
         ]
       },
       {
@@ -94,6 +95,38 @@
             "acceptedAnswer": {
               "@type": "Answer",
               "text": "e-nvoice expose un serveur WebMCP (Model Context Protocol) côté client dans le navigateur. Cela permet aux agents IA (comme Claude, ChatGPT, Chrome AI) d'interagir directement avec l'application pour valider ou pré-remplir des factures."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I submit e-nvoice invoices to Chorus Pro?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Generated Factur-X PDF files from e-nvoice can be uploaded directly to the Chorus Pro web portal (https://portail.chorus-pro.gouv.fr) by selecting 'Structured file (Factur-X/UBL)' deposit option. They are also compatible with Chorus Pro API and PDP platforms."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Les factures e-nvoice sont-elles compatibles avec Chorus Pro ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Oui, les factures Factur-X générées par e-nvoice sont 100% compatibles avec Chorus Pro. Vous pouvez les déposer manuellement sur le portail Chorus Pro ou les transmettre via l'API ou une plateforme PDP."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which AI platforms can use the e-nvoice WebMCP API?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The WebMCP API works with Claude (Desktop & Browser Extension), Gemini (via Chrome DevTools), ChatGPT (Custom GPT Actions), Chrome AI, Mistral Vibe, and any MCP-compatible client. Use window.mcp.callTool() or postMessage JSON-RPC."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Comment utiliser e-nvoice avec les assistants IA ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "e-nvoice expose une API WebMCP dans le navigateur. Les assistants IA peuvent utiliser window.mcp.callTool() ou postMessage pour générer, valider ou calculer des factures. Compatible avec Claude, Gemini, ChatGPT, Mistral Vibe et autres."
             }
           }
         ]

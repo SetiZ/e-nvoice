@@ -30,7 +30,9 @@ function App() {
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [showWebMcpModal, setShowWebMcpModal] = useState(false);
+  const [showFaqModal, setShowFaqModal] = useState(false);
   const [activeWebMcpTab, setActiveWebMcpTab] = useState<'tools' | 'connect'>('tools');
+  const [activePlatform, setActivePlatform] = useState<'universal' | 'postmessage' | 'chrome'>('universal');
   const [lang, setLang] = useState<Language>('fr');
   const t = translations[lang];
 
@@ -102,6 +104,14 @@ function App() {
               style={{ borderColor: 'rgba(96, 165, 250, 0.4)', color: '#60a5fa' }}
             >
               <Cpu size={18} /> WebMCP
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setShowFaqModal(!showFaqModal)}
+              title={lang === 'fr' ? 'Foire Aux Questions' : 'Frequently Asked Questions'}
+              style={{ borderColor: 'rgba(245, 158, 11, 0.4)', color: '#fbbf24' }}
+            >
+              <HelpCircle size={18} /> {lang === 'fr' ? 'FAQ' : 'FAQ'}
             </button>
             <button
               className="btn btn-secondary"
@@ -304,57 +314,187 @@ function App() {
                 </div>
               )}
 
-              {/* Tab 2: Web & ChatGPT Integration */}
+              {/* Tab 2: Platform-specific Integration Guides */}
               {activeWebMcpTab === 'connect' && (
                 <div>
-                  <div style={{ marginBottom: '1.25rem' }}>
-                    <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
-                      1. Dans la console JS ou Extension Navigateur (window.mcp) :
+                  <div style={{ marginBottom: '1.5rem', padding: '1rem', background: 'rgba(245, 158, 11, 0.1)', borderRadius: '0.5rem', borderLeft: '4px solid #f59e0b' }}>
+                    <p style={{ fontWeight: 600, color: '#fbbf24', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                      ⚠️ {lang === 'fr' ? 'WebMCP - Version Bêta' : 'WebMCP - Beta Version'}
                     </p>
-                    <pre className="code-block">
-{`// Appeler un outil WebMCP directement dans la page
-await window.mcp.callTool('calculate_invoice_totals', {
-  items: [{ quantity: 2, unitPrice: 500, vatRate: 20 }]
-});`}
-                    </pre>
+                    <p className="text-secondary" style={{ fontSize: '0.85rem', lineHeight: 1.5 }}>
+                      {lang === 'fr' 
+                        ? 'L\'API WebMCP fonctionne uniquement depuis la page e-nvoice elle-même. Les plateformes IA externes (Claude.ai, Gemini, Mistral) ne peuvent pas y accéder directement pour des raisons de sécurité navigateur.'
+                        : 'The WebMCP API only works from the e-nvoice page itself. External AI platforms (Claude.ai, Gemini, Mistral) cannot access it directly due to browser security restrictions.'
+                      }
+                    </p>
+                  </div>
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                      🎯 {t.selectMethod}:
+                    </p>
                   </div>
 
-                  <div style={{ marginBottom: '1.25rem' }}>
-                    <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
-                      2. Via window.postMessage (JSON-RPC 2.0) :
-                    </p>
-                    <pre className="code-block">
-{`window.postMessage({
+                  {/* Platform Tabs */}
+                  <div className="webmcp-platform-tabs">
+                    <button
+                      className={`webmcp-platform-tab ${activePlatform === 'universal' ? 'active' : ''}`}
+                      onClick={() => setActivePlatform('universal')}
+                    >
+                      <span className="platform-icon">🌐</span> {lang === 'fr' ? 'Console Navigateur' : 'Browser Console'}
+                    </button>
+                    <button
+                      className={`webmcp-platform-tab ${activePlatform === 'postmessage' ? 'active' : ''}`}
+                      onClick={() => setActivePlatform('postmessage')}
+                    >
+                      <span className="platform-icon">🔄</span> {lang === 'fr' ? 'postMessage' : 'postMessage'}
+                    </button>
+                    <button
+                      className={`webmcp-platform-tab ${activePlatform === 'chrome' ? 'active' : ''}`}
+                      onClick={() => setActivePlatform('chrome')}
+                    >
+                      <span className="platform-icon">ℹ️</span> {lang === 'fr' ? 'Chrome DevTools' : 'Chrome DevTools'}
+                    </button>
+                  </div>
+
+                  {/* Universal - Browser Console */}
+                  {activePlatform === 'universal' && (
+                    <div>
+                      <div style={{ marginBottom: '1.25rem' }}>
+                        <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
+                          {lang === 'fr' ? 'Méthode la plus simple : Console du navigateur' : 'Simplest method: Browser console'}
+                        </p>
+                        <p className="text-secondary" style={{ fontSize: '0.85rem', marginBottom: '0.75rem' }}>
+                          {lang === 'fr' 
+                            ? 'Ouvrez les outils de développement (F12 ou Ctrl+Shift+I), allez dans l\'onglet Console, puis exécutez :'
+                            : 'Open DevTools (F12 or Ctrl+Shift+I), go to Console tab, then execute:'
+                          }
+                        </p>
+                        <pre className="code-block">
+{`// ${lang === 'fr' ? 'Générer une facture Factur-X' : 'Generate a Factur-X invoice'}
+await window.mcp.callTool('generate_facturx_invoice', {
+  invoice: {
+    number: 'INV-2026-001',
+    date: new Date().toISOString().split('T')[0],
+    seller: { 
+      name: '${lang === 'fr' ? 'Mon Entreprise' : 'My Company'}', 
+      siret: '12345678900012', 
+      vatNumber: 'FRXX123456789' 
+    },
+    buyer: { 
+      name: '${lang === 'fr' ? 'Client SA' : 'Client Inc'}' 
+    },
+    items: [
+      { description: '${lang === 'fr' ? 'Service' : 'Service'}', quantity: 1, unitPrice: 1000, vatRate: 20 }
+    ]
+  },
+  lang: '${lang}'
+});
+
+// ${lang === 'fr' ? 'Le PDF sera téléchargé automatiquement' : 'PDF will be downloaded automatically'}`}
+                        </pre>
+                      </div>
+                      <div>
+                        <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
+                          {lang === 'fr' ? 'Autres outils disponibles' : 'Other available tools'}
+                        </p>
+                        <ul style={{ fontSize: '0.85rem', marginTop: '0.5rem' }}>
+                          <li><code>calculate_invoice_totals</code> - {lang === 'fr' ? 'Calculer montants HT/TVA/TTC' : 'Calculate HT/VAT/total'}</li>
+                          <li><code>validate_invoice_data</code> - {lang === 'fr' ? 'Valider les champs obligatoires' : 'Validate required fields'}</li>
+                          <li><code>generate_facturx_xml</code> - {lang === 'fr' ? 'Générer le XML UN/CEFACT' : 'Generate UN/CEFACT XML'}</li>
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* postMessage */}
+                  {activePlatform === 'postmessage' && (
+                    <div>
+                      <div style={{ marginBottom: '1.25rem' }}>
+                        <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
+                          {lang === 'fr' ? 'Pour les intégrations externes : JSON-RPC via postMessage' : 'For external integrations: JSON-RPC via postMessage'}
+                        </p>
+                        <p className="text-secondary" style={{ fontSize: '0.85rem', marginBottom: '0.75rem' }}>
+                          {lang === 'fr' 
+                            ? 'Utilisez postMessage pour communiquer avec e-nvoice depuis des iframes ou extensions. Ne fonctionne pas avec les plateformes IA externes.'
+                            : 'Use postMessage to communicate with e-nvoice from iframes or extensions. Does not work with external AI platforms.'
+                          }
+                        </p>
+                        <pre className="code-block">
+{`// ${lang === 'fr' ? 'Envoyer une requête' : 'Send a request'}
+window.postMessage({
   jsonrpc: '2.0',
   id: 1,
   method: 'tools/call',
   params: {
-    name: 'validate_invoice_data',
-    arguments: { number: 'INV-001', date: '2026-08-09', sellerName: 'Ma Sté', buyerName: 'Client' }
+    name: 'calculate_invoice_totals',
+    arguments: {
+      items: [
+        { quantity: 2, unitPrice: 500, vatRate: 20 },
+        { quantity: 1, unitPrice: 1000, vatRate: 10 }
+      ]
+    }
   }
-}, '*');`}
-                    </pre>
-                  </div>
+}, '*');
 
-                  <div style={{ marginBottom: '1.25rem' }}>
-                    <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
-                      3. Pour ChatGPT (Actions GPT Personnalisées) :
+// ${lang === 'fr' ? 'Écouter la réponse' : 'Listen for response'}
+window.addEventListener('message', (event) => {
+  if (event.data?.jsonrpc === '2.0' && event.data.id === 1) {
+    console.log('${lang === 'fr' ? 'Résultat :' : 'Result:'} ', event.data.result);
+  }
+});`}
+                        </pre>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Chrome DevTools */}
+                  {activePlatform === 'chrome' && (
+                    <div>
+                      <div style={{ marginBottom: '1.25rem' }}>
+                        <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
+                          {lang === 'fr' ? 'Pourquoi WebMCP n\'apparaît pas dans Chrome DevTools ?' : 'Why doesn\'t WebMCP appear in Chrome DevTools?'}
+                        </p>
+                        <p className="text-secondary" style={{ fontSize: '0.85rem', lineHeight: 1.6 }}>
+                          {lang === 'fr' 
+                            ? 'Chrome DevTools > Application > WebMCP n\'affiche que les serveurs MCP enregistrés avec Chrome (via chrome://settings/ai). L\'API window.mcp d\'e-nvoice est une implémentation custom côté client qui ne s\'y affiche pas. C\'est normal, même en production.'
+                            : 'Chrome DevTools > Application > WebMCP only shows MCP servers registered with Chrome (via chrome://settings/ai). e-nvoice\'s window.mcp API is a custom client-side implementation that does not appear there. This is normal, even in production.'
+                          }
+                        </p>
+                        <p className="text-secondary" style={{ fontSize: '0.85rem', lineHeight: 1.6, marginTop: '1rem' }}>
+                          {lang === 'fr' 
+                            ? 'Votre serveur WebMCP est bien actif ! Vous pouvez le vérifier en exécutant dans la console :'
+                            : 'Your WebMCP server is active! You can verify it by executing in the console:'
+                          }
+                        </p>
+                        <pre className="code-block">
+{`// ${lang === 'fr' ? 'Vérifier que window.mcp existe' : 'Check that window.mcp exists'}
+console.log(typeof window.mcp); // Should log: "object"
+
+// ${lang === 'fr' ? 'Lister les outils disponibles' : 'List available tools'}
+console.log(await window.mcp.listTools());
+
+// ${lang === 'fr' ? 'Appeler un outil' : 'Call a tool'}
+const result = await window.mcp.callTool('validate_invoice_data', {
+  number: 'TEST-001',
+  date: '2026-08-11',
+  sellerName: 'Test',
+  buyerName: 'Client'
+});
+console.log(result);`}
+                        </pre>
+                      </div>
+                    </div>
+                  )}
+
+                  <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid rgba(96, 165, 250, 0.2)' }}>
+                    <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                      📚 {lang === 'fr' ? 'Ressources de découverte' : 'Discovery Resources'}
                     </p>
                     <p className="text-secondary" style={{ fontSize: '0.85rem' }}>
-                      ChatGPT → Configurer → <strong>Ajouter une action</strong> → Importer cette URL :
-                    </p>
-                    <pre className="code-block">
-https://setiz.github.io/e-nvoice/openapi.json
-                    </pre>
-                  </div>
-
-                  <div>
-                    <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
-                      📄 Index & Découverte par Moteurs IA (AEO/GEO) :
-                    </p>
-                    <p className="text-secondary" style={{ fontSize: '0.85rem' }}>
-                      • Manifeste MCP : <code>https://setiz.github.io/e-nvoice/.well-known/mcp.json</code><br />
-                      • Fichier LLM : <code>https://setiz.github.io/e-nvoice/llms.txt</code>
+                      • <strong>{lang === 'fr' ? 'Manifest MCP' : 'MCP Manifest'}</strong> : <code>https://setiz.github.io/e-nvoice/.well-known/mcp.json</code><br />
+                      • <strong>{lang === 'fr' ? 'Fichier LLM' : 'LLM File'}</strong> : <code>https://setiz.github.io/e-nvoice/llms.txt</code> ({lang === 'fr' ? 'Perplexity, SearchGPT' : 'Perplexity, SearchGPT'})<br />
+                      • <strong>OpenAPI</strong> : <code>https://setiz.github.io/e-nvoice/openapi.json</code> ({lang === 'fr' ? 'Postman, ChatGPT' : 'Postman, ChatGPT'})<br />
+                      • <strong>{lang === 'fr' ? 'Découverte auto' : 'Auto-discovery'}</strong> : {lang === 'fr' ? 'Les agents IA peuvent lire /llms.txt pour comprendre les capacités' : 'AI agents can read /llms.txt to understand capabilities'}
                     </p>
                   </div>
                 </div>
@@ -364,26 +504,41 @@ https://setiz.github.io/e-nvoice/openapi.json
           </div>
         )}
 
-        {/* AEO / FAQ Section */}
-        <section className="faq-section">
-          <div className="glass-card">
-            <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-              <HelpCircle size={20} className="text-primary" /> {t.faqTitle}
-            </h2>
-            <details className="faq-card" open>
-              <summary>{t.faq1Q}</summary>
-              <p>{t.faq1A}</p>
-            </details>
-            <details className="faq-card">
-              <summary>{t.faq2Q}</summary>
-              <p>{t.faq2A}</p>
-            </details>
-            <details className="faq-card">
-              <summary>{t.faq3Q}</summary>
-              <p>{t.faq3A}</p>
-            </details>
+        {/* FAQ Modal */}
+        {showFaqModal && (
+          <div className="modal-backdrop" onClick={() => setShowFaqModal(false)}>
+            <div className="modal-container" onClick={e => e.stopPropagation()}>
+              <div className="flex-between mb-4">
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <HelpCircle size={18} className="text-primary" /> {t.faqTitle}
+                </h3>
+                <button className="btn-icon" onClick={() => setShowFaqModal(false)}>✕</button>
+              </div>
+              <div className="faq-modal-content">
+                <details className="faq-card" open>
+                  <summary>{t.faq1Q}</summary>
+                  <p>{t.faq1A}</p>
+                </details>
+                <details className="faq-card">
+                  <summary>{t.faq2Q}</summary>
+                  <p>{t.faq2A}</p>
+                </details>
+                <details className="faq-card">
+                  <summary>{t.faq3Q}</summary>
+                  <p>{t.faq3A}</p>
+                </details>
+                <details className="faq-card">
+                  <summary>{t.faq4Q}</summary>
+                  <p>{t.faq4A}</p>
+                </details>
+                <details className="faq-card">
+                  <summary>{t.faq5Q}</summary>
+                  <p>{t.faq5A}</p>
+                </details>
+              </div>
+            </div>
           </div>
-        </section>
+        )}
 
       </div>
 

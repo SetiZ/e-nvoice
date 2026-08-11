@@ -6,21 +6,36 @@
 - **Factur-X Standard**: Generates compliant hybrid PDF/A-3 documents embedded with `factur-x.xml` (UN/CEFACT CrossIndustryInvoice v100).
 - **French 2026 Mandate Ready**: Meets the B2B electronic invoicing requirements for France (EN 16931 standard).
 - **100% Client-Side**: Zero data sent to servers. PDF and XML rendering occurs entirely inside the user's browser.
-- **WebMCP Ready**: Exposes in-browser Model Context Protocol (WebMCP) endpoints over `window.mcp` and `postMessage` for AI agents.
+- **WebMCP (Beta)**: Exposes in-browser Model Context Protocol endpoints over `window.mcp` and `postMessage` for scripts and extensions.
+- **Chorus Pro Compatible**: Generated Factur-X PDFs can be uploaded directly to Chorus Pro portal (B2G/B2B).
 
 ## Quick Facts
 - Application URL: https://setiz.github.io/e-nvoice/
 - Supported Formats: Factur-X / EN 16931, PDF/A-3, CrossIndustryInvoice XML
 - Price: 100% Free & Open Source
 - Privacy: Zero tracking, zero server side processing
+- License: MIT
 
-## WebMCP Tools Available
-Agents visiting this page can execute WebMCP tools via `window.mcp.callTool(name, params)` or `postMessage`:
-- `calculate_invoice_totals`: Calculates subtotal HT, VAT totals, and total TTC.
-- `validate_invoice_data`: Validates mandatory fields (SIRET, VAT numbers, dates, line items).
-- `generate_facturx_invoice`: Generates and triggers download of the Factur-X PDF.
+## WebMCP Tools (Beta) - Available via `window.mcp.callTool()`
+> ⚠️ **Important**: WebMCP API only works from within the e-nvoice page itself due to browser security restrictions. External AI platforms cannot access it directly.
+
+- `calculate_invoice_totals`: Calculates subtotal HT, VAT totals, and total TTC from invoice line items.
+- `validate_invoice_data`: Validates mandatory fields (invoice number, date, seller/buyer names, SIRET, VAT numbers, line items) against EN 16931 requirements.
+- `generate_facturx_xml`: Generates raw Factur-X / EN 16931 XML string (UN/CEFACT CrossIndustryInvoice D16B).
+- `generate_facturx_invoice`: Generates and triggers browser download of the complete Factur-X PDF/A-3 hybrid file.
+
+## Usage Notes for AI Agents
+- **Working methods**: Direct JS execution in browser console, browser extensions, iframes via postMessage
+- **Not working**: Claude.ai web, Gemini.google.com, ChatGPT.com (cannot access cross-origin window objects)
+- **Alternative**: Guide users to execute `window.mcp.callTool()` commands in the e-nvoice page console
+
+## Chorus Pro Integration
+- Manual upload: Download PDF from e-nvoice → Upload to https://portail.chorus-pro.gouv.fr → Select "Fichier structure (Factur-X/UBL)"
+- API/EDI: Generated files compatible with Chorus Pro API and PDP (Plateforme de Dematerialisation Partenaire) platforms
+- Requirements: Valid SIRET, VAT number, unique invoice number
 
 ## Specifications Referenced
 - EN 16931-1: European Standard for Electronic Invoicing
 - Factur-X 1.0.06 Specification (FNFE-MPE & FERD)
 - UN/CEFACT CrossIndustryInvoice (CII) D16B / 100
+- CIUS: Core Invoice Usage Specification (Chorus Pro profile)

@@ -38,6 +38,131 @@ Prêt pour la **réforme française 2026 de la facturation électronique B2B**, 
 
 ---
 
+## 🇫🇷 Compatibilité Chorus Pro
+
+**e-nvoice génère des factures 100% compatibles avec [Chorus Pro](https://chorus-pro.gouv.fr/)** , la plateforme officielle française pour la facturation électronique B2G et B2B obligatoire à partir de **2026**.
+
+### ✅ Ce qui fonctionne :
+- Format **Factur-X / EN 16931** acceptés par Chorus Pro
+- PDF/A-3 hybride avec XML UN/CEFACT CrossIndustryInvoice intégré
+- Conforme au profil **CIUS** (Core Invoice Usage Specification) requis
+
+### 📥 Comment déposer sur Chorus Pro :
+
+**Méthode 1 : Dépôt manuel (Portail Web)**
+1. Générez votre facture Factur-X avec e-nvoice
+2. Connectez-vous à [https://portail.chorus-pro.gouv.fr](https://portail.chorus-pro.gouv.fr)
+3. Sélectionnez **"Déposer une facture"** → **"Fichier structuré (Factur-X/UBL)"**
+4. Téléchargez le fichier PDF généré par e-nvoice
+5. Complétez les métadonnées et validez
+
+**Méthode 2 : Transmission automatique (EDI/API)**
+Les fichiers générés par e-nvoice peuvent être transmis via :
+- L'API Chorus Pro (nécessite un compte Piste/Flux)
+- Votre solution PDP (Plateforme de Dématérialisation Partenaire) existante
+- Logiciels comptables compatibles (Sage, Ciel, QuickBooks, etc.)
+
+### ⚠️ Points de vigilance :
+- Vérifiez que le **SIRET** et le **numéro de TVA intracommunautaire** sont correctement renseignés
+- Chorus Pro requiert un **numéro de facture unique** (champ obligatoire)
+- Les factures doivent être signées électroniquement pour certains marchés publics (e-nvoice ne gère pas encore la signature)
+
+---
+
+## 🤖 WebMCP (Beta) - Intégration IA ⚠️
+
+**e-nvoice** expose une API **WebMCP** (Model Context Protocol) **en version bêta** directement dans le navigateur.
+
+> ⚠️ **Statut Beta**: Le support WebMCP/MCP par les plateformes IA évolue rapidement. Les fonctionnalités décrites ci-dessous reflètent l'état **août 2026** et peuvent changer. L'API `window.mcp` fonctionne de manière fiable **uniquement depuis la page e-nvoice elle-même**.
+
+**e-nvoice** permet aux développeurs et scripts d'interagir avec l'application pour pré-remplir, valider ou générer des factures de manière programmatique.
+
+### 🛠️ Outils Disponibles
+
+| Outil | Description | Paramètres |
+| :--- | :--- | :--- |
+| `calculate_invoice_totals` | Calcule HT, TVA et TTC à partir des lignes | `items: Array<{quantity, unitPrice, vatRate}>` |
+| `validate_invoice_data` | Vérifie les champs obligatoires EN 16931 | `number, date, sellerName, buyerName, itemCount` |
+| `generate_facturx_xml` | Génère le XML UN/CEFACT brut | `invoice: Invoice` |
+| `generate_facturx_invoice` | Génère et télécharge le PDF Factur-X | `invoice: Invoice, lang: 'fr'/'en'` |
+
+### 🌐 Méthodes de Connexion
+
+> ⚠️ **Important**: L'API WebMCP d'e-nvoice (`window.mcp`) **ne fonctionne que depuis la page e-nvoice elle-même** en raison des restrictions de sécurité des navigateurs. Les plateformes IA externes **ne peuvent pas y accéder directement**.
+
+| Méthode | Description | Fonctionne avec |
+|---------|-------------|-----------------|
+| **Console Navigateur (DevTools)** | `window.mcp.callTool()` directement | ✅ Tous navigateurs |
+| **Extensions Navigateur** | Scripts injectés dans la page | ✅ Extensions Chrome/Edge |
+| **Bookmarklets** | JavaScript bookmark | ✅ Tous navigateurs |
+| **Clients MCP locaux** | Connexion via `.well-known/mcp.json` | ✅ Claude Desktop, clients MCP |
+| **ChatGPT Actions** | Import OpenAPI | ❌ **Non** (nécessite un serveur) |
+| **Claude.ai (web)** | Accès direct | ❌ **Non** (restrictions cross-origin) |
+| **Gemini.google.com** | Accès direct | ❌ **Non** (restrictions cross-origin) |
+| **Mistral Le Chat** | Accès direct | ❌ **Non** (pas de support MCP) |
+
+> ❓ **Pourquoi Chrome DevTools > Application > WebMCP ne montre pas les outils ?**
+> Chrome's WebMCP viewer affiche uniquement les serveurs MCP **enregistrés avec Chrome** (via `chrome://settings/ai`). L'API `window.mcp` d'e-nvoice est une implémentation **custom** qui n'apparaît pas dans cette section. C'est normal en développement local.
+
+### 📖 Méthodes Fonctionnelles
+
+#### ✅ **1. Console Navigateur (Tous navigateurs)**
+La méthode la plus simple et universelle :
+
+```javascript
+// Sur la page e-nvoice, ouvrez DevTools (F12) puis :
+await window.mcp.callTool('generate_facturx_invoice', {
+  invoice: {
+    number: 'INV-2026-001',
+    date: '2026-08-11',
+    seller: { name: 'Mon Entreprise', siret: '12345678900012', vatNumber: 'FRXX123456789' },
+    buyer: { name: 'Client SA', siret: '98765432100010' },
+    items: [{ description: 'Service', quantity: 1, unitPrice: 1000, vatRate: 20 }]
+  },
+  lang: 'fr'
+});
+```
+
+#### ✅ **2. JSON-RPC via postMessage (Extensions, iframes)**
+Pour les intégrations qui ne peuvent pas accéder directement à `window.mcp` :
+
+```javascript
+// Envoyer une requête
+window.postMessage({
+  jsonrpc: '2.0',
+  id: 1,
+  method: 'tools/call',
+  params: {
+    name: 'calculate_invoice_totals',
+    arguments: { items: [{ quantity: 2, unitPrice: 500, vatRate: 20 }] }
+  }
+}, '*');
+
+// Recevoir la réponse
+window.addEventListener('message', (event) => {
+  if (event.data?.jsonrpc === '2.0' && event.data.id === 1) {
+    console.log('Résultat:', event.data.result);
+  }
+});
+```
+
+#### ⚠️ **3. Claude Desktop (MCP natif)**
+Claude Desktop peut découvrir le manifest MCP, mais **ne peut pas accéder à `window.mcp`** de votre navigateur. Pour une intégration locale, vous auriez besoin d'un serveur MCP séparé (non inclus dans e-nvoice).
+
+#### ❌ **4. ChatGPT Actions / Autres plateformes web**
+Ces méthodes **ne fonctionnent PAS** avec e-nvoice car :
+- ChatGPT Actions nécessite un **endpoint HTTP server-side** (e-nvoice est 100% client-side)
+- Claude.ai, Gemini, Mistral Le Chat **ne peuvent pas accéder** au `window` d'autres onglets pour des raisons de sécurité
+
+> 💡 **Solution alternative pour les plateformes web** : Guidez l'utilisateur pour qu'il exécute manuellement le code JavaScript dans la console de la page e-nvoice.
+
+### 🔗 Ressources de Découverte
+- **Manifest MCP** : `/.well-known/mcp.json`
+- **Fichier LLM** : `/llms.txt` (pour Perplexity, SearchGPT)
+- **OpenAPI** : `/openapi.json` (pour ChatGPT, Postman)
+
+---
+
 ## 🚀 Développement Local
 
 ### Prérequis
