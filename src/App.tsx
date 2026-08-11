@@ -139,16 +139,16 @@ function App() {
           <h2>{t.invoiceDetails}</h2>
           <div className="form-row">
             <div className="form-group">
-              <label>{t.invoiceNumber}</label>
-              <input type="text" value={invoice.number} onChange={e => handleInvoiceChange('number', e.target.value)} />
+              <label htmlFor="invoice-number">{t.invoiceNumber}</label>
+              <input id="invoice-number" type="text" value={invoice.number} onChange={e => handleInvoiceChange('number', e.target.value)} />
             </div>
             <div className="form-group">
-              <label>{t.date}</label>
-              <input type="date" value={invoice.date} onChange={e => handleInvoiceChange('date', e.target.value)} />
+              <label htmlFor="invoice-date">{t.date}</label>
+              <input id="invoice-date" type="date" value={invoice.date} onChange={e => handleInvoiceChange('date', e.target.value)} />
             </div>
             <div className="form-group">
-              <label>{t.dueDate}</label>
-              <input type="date" value={invoice.dueDate} onChange={e => handleInvoiceChange('dueDate', e.target.value)} />
+              <label htmlFor="invoice-due-date">{t.dueDate}</label>
+              <input id="invoice-due-date" type="date" value={invoice.dueDate} onChange={e => handleInvoiceChange('dueDate', e.target.value)} />
             </div>
           </div>
         </div>
@@ -158,30 +158,30 @@ function App() {
           <div className="glass-card">
             <h2>{t.sellerTitle}</h2>
             <div className="form-group">
-              <label>{t.name}</label>
-              <input type="text" value={invoice.seller.name} onChange={e => handleSellerChange('name', e.target.value)} />
+              <label htmlFor="seller-name">{t.name}</label>
+              <input id="seller-name" type="text" value={invoice.seller.name} onChange={e => handleSellerChange('name', e.target.value)} />
             </div>
             <div className="form-group">
-              <label>{t.address}</label>
-              <input type="text" value={invoice.seller.address} onChange={e => handleSellerChange('address', e.target.value)} />
+              <label htmlFor="seller-address">{t.address}</label>
+              <input id="seller-address" type="text" value={invoice.seller.address} onChange={e => handleSellerChange('address', e.target.value)} />
             </div>
             <div className="form-row">
               <div className="form-group">
-                <label>{t.city}</label>
-                <input type="text" value={invoice.seller.city} onChange={e => handleSellerChange('city', e.target.value)} />
+                <label htmlFor="seller-city">{t.city}</label>
+                <input id="seller-city" type="text" value={invoice.seller.city} onChange={e => handleSellerChange('city', e.target.value)} />
               </div>
               <div className="form-group">
-                <label>{t.zip}</label>
-                <input type="text" value={invoice.seller.zip} onChange={e => handleSellerChange('zip', e.target.value)} />
+                <label htmlFor="seller-zip">{t.zip}</label>
+                <input id="seller-zip" type="text" value={invoice.seller.zip} onChange={e => handleSellerChange('zip', e.target.value)} />
               </div>
             </div>
             <div className="form-group">
-              <label>{t.siret}</label>
-              <input type="text" value={invoice.seller.siret} onChange={e => handleSellerChange('siret', e.target.value)} />
+              <label htmlFor="seller-siret">{t.siret}</label>
+              <input id="seller-siret" type="text" value={invoice.seller.siret} onChange={e => handleSellerChange('siret', e.target.value)} />
             </div>
             <div className="form-group">
-              <label>{t.vatNumber}</label>
-              <input type="text" value={invoice.seller.vatNumber} onChange={e => handleSellerChange('vatNumber', e.target.value)} />
+              <label htmlFor="seller-vat">{t.vatNumber}</label>
+              <input id="seller-vat" type="text" value={invoice.seller.vatNumber} onChange={e => handleSellerChange('vatNumber', e.target.value)} />
             </div>
           </div>
 
@@ -189,30 +189,30 @@ function App() {
           <div className="glass-card">
             <h2>{t.buyerTitle}</h2>
             <div className="form-group">
-              <label>{t.name}</label>
-              <input type="text" value={invoice.buyer.name} onChange={e => handleBuyerChange('name', e.target.value)} />
+              <label htmlFor="buyer-name">{t.name}</label>
+              <input id="buyer-name" type="text" value={invoice.buyer.name} onChange={e => handleBuyerChange('name', e.target.value)} />
             </div>
             <div className="form-group">
-              <label>{t.address}</label>
-              <input type="text" value={invoice.buyer.address} onChange={e => handleBuyerChange('address', e.target.value)} />
+              <label htmlFor="buyer-address">{t.address}</label>
+              <input id="buyer-address" type="text" value={invoice.buyer.address} onChange={e => handleBuyerChange('address', e.target.value)} />
             </div>
             <div className="form-row">
               <div className="form-group">
-                <label>{t.city}</label>
-                <input type="text" value={invoice.buyer.city} onChange={e => handleBuyerChange('city', e.target.value)} />
+                <label htmlFor="buyer-city">{t.city}</label>
+                <input id="buyer-city" type="text" value={invoice.buyer.city} onChange={e => handleBuyerChange('city', e.target.value)} />
               </div>
               <div className="form-group">
-                <label>{t.zip}</label>
-                <input type="text" value={invoice.buyer.zip} onChange={e => handleBuyerChange('zip', e.target.value)} />
+                <label htmlFor="buyer-zip">{t.zip}</label>
+                <input id="buyer-zip" type="text" value={invoice.buyer.zip} onChange={e => handleBuyerChange('zip', e.target.value)} />
               </div>
             </div>
             <div className="form-group">
-              <label>{t.siret}</label>
-              <input type="text" value={invoice.buyer.siret} onChange={e => handleBuyerChange('siret', e.target.value)} />
+              <label htmlFor="buyer-siret">{t.siret}</label>
+              <input id="buyer-siret" type="text" value={invoice.buyer.siret} onChange={e => handleBuyerChange('siret', e.target.value)} />
             </div>
             <div className="form-group">
-              <label>{t.vatNumber}</label>
-              <input type="text" value={invoice.buyer.vatNumber} onChange={e => handleBuyerChange('vatNumber', e.target.value)} />
+              <label htmlFor="buyer-vat">{t.vatNumber}</label>
+              <input id="buyer-vat" type="text" value={invoice.buyer.vatNumber} onChange={e => handleBuyerChange('vatNumber', e.target.value)} />
             </div>
           </div>
         </div>
