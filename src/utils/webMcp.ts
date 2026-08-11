@@ -1,6 +1,5 @@
 import type { Invoice } from '../types.ts';
 import { generateFacturXXml } from './facturx.ts';
-import { generateFacturX } from './pdfGenerator.ts';
 
 export interface WebMcpTool {
   name: string;
@@ -137,6 +136,8 @@ export class WebMcpServer {
       case 'generate_facturx_invoice': {
         const invoice = args.invoice as Invoice;
         const lang = (args.lang || 'fr') as 'fr' | 'en';
+        // Dynamically import PDF generator for code-splitting
+        const { generateFacturX } = await import('./pdfGenerator.ts');
         await generateFacturX(invoice, lang);
         return { success: true, message: 'Factur-X PDF generated and download triggered.' };
       }

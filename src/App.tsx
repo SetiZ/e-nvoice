@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Plus, Trash2, Download, CheckCircle, Globe, Cpu, HelpCircle } from 'lucide-react';
 import type { Invoice, Party, LineItem } from './types.ts';
-import { generateFacturX } from './utils/pdfGenerator.ts';
 import { translations, type Language } from './i18n.ts';
 import { WEBMCP_TOOLS } from './utils/webMcp.ts';
 import './index.css';
@@ -78,6 +77,8 @@ function App() {
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
+      // Dynamically import PDF libraries only when needed (code-splitting)
+      const { generateFacturX } = await import('./utils/pdfGenerator.ts');
       await generateFacturX(invoice, lang);
     } catch (error) {
       console.error('Failed to generate Factur-X', error);
@@ -88,7 +89,7 @@ function App() {
   };
 
   return (
-    <div className="app-container">
+    <div className="app-container" role="main">
       {/* Form Section */}
       <div className="form-section">
         <div className="glass-card mb-4 flex-between">
@@ -101,7 +102,8 @@ function App() {
               className="btn btn-secondary"
               onClick={() => setShowWebMcpModal(!showWebMcpModal)}
               title={t.webMcpTooltip}
-              style={{ borderColor: 'rgba(96, 165, 250, 0.4)', color: '#60a5fa' }}
+              style={{ color: '#60a5fa', borderColor: '#60a5fa' }}
+              aria-label={t.webMcpTooltip}
             >
               <Cpu size={18} /> WebMCP
             </button>
@@ -109,13 +111,15 @@ function App() {
               className="btn btn-secondary"
               onClick={() => setShowFaqModal(!showFaqModal)}
               title={lang === 'fr' ? 'Foire Aux Questions' : 'Frequently Asked Questions'}
-              style={{ borderColor: 'rgba(245, 158, 11, 0.4)', color: '#fbbf24' }}
+              style={{ color: '#fbbf24', borderColor: '#fbbf24' }}
+              aria-label={lang === 'fr' ? 'Foire Aux Questions' : 'Frequently Asked Questions'}
             >
               <HelpCircle size={18} /> {lang === 'fr' ? 'FAQ' : 'FAQ'}
             </button>
             <button
               className="btn btn-secondary"
               onClick={() => setLang(lang === 'en' ? 'fr' : 'en')}
+              aria-label={lang === 'fr' ? 'Changer la langue en anglais' : 'Switch language to French'}
             >
               <Globe size={18} /> {lang.toUpperCase()}
             </button>
@@ -123,6 +127,7 @@ function App() {
               className="btn btn-primary"
               onClick={handleGenerate}
               disabled={isGenerating}
+              aria-label={isGenerating ? t.generating : t.generateFacturX}
             >
               {isGenerating ? <div className="loader"></div> : <Download size={18} />}
               {t.generateFacturX}
@@ -214,53 +219,73 @@ function App() {
 
         <div className="glass-card">
           <div className="flex-between mb-4">
-            <h2>{t.lineItems}</h2>
-            <button className="btn btn-secondary" onClick={addItem}>
+            <h2 id="line-items-heading">{t.lineItems}</h2>
+            <button className="btn btn-secondary" onClick={addItem} aria-label={t.addItem}>
               <Plus size={16} /> {t.addItem}
             </button>
           </div>
 
-          <div className="line-item-header">
-            <div>{t.description}</div>
-            <div>{t.quantity}</div>
-            <div>{t.price}</div>
-            <div>{t.vatPercent}</div>
-            <div style={{ width: 36 }}></div>
+          <div className="line-item-header" role="rowgroup">
+            <div role="columnheader">{t.description}</div>
+            <div role="columnheader">{t.quantity}</div>
+            <div role="columnheader">{t.price}</div>
+            <div role="columnheader">{t.vatPercent}</div>
+            <div role="columnheader" style={{ width: 36 }} aria-label="Actions"></div>
           </div>
 
-          <div className="line-items-container">
+          <div className="line-items-container" role="rowgroup" aria-labelledby="line-items-heading">
             {invoice.items.map(item => (
-              <div key={item.id} className="line-item">
-                <input
-                  type="text"
-                  placeholder={t.itemDescriptionPlaceholder}
-                  value={item.description}
-                  onChange={e => updateItem(item.id, 'description', e.target.value)}
-                />
-                <input
-                  type="number"
-                  min="1"
-                  value={item.quantity}
-                  onChange={e => updateItem(item.id, 'quantity', parseFloat(e.target.value))}
-                />
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={item.unitPrice}
-                  onChange={e => updateItem(item.id, 'unitPrice', parseFloat(e.target.value))}
-                />
-                <select
-                  value={item.vatRate}
-                  onChange={e => updateItem(item.id, 'vatRate', parseFloat(e.target.value))}
-                >
-                  <option value="20">20%</option>
-                  <option value="10">10%</option>
-                  <option value="5.5">5.5%</option>
-                  <option value="2.1">2.1%</option>
-                  <option value="0">0%</option>
-                </select>
-                <button className="btn-icon" onClick={() => removeItem(item.id)}>
+              <div key={item.id} className="line-item" role="row">
+                <div className="form-group">
+                  <label htmlFor={`item-desc-${item.id}`} className="sr-only">{t.description}</label>
+                  <input
+                    id={`item-desc-${item.id}`}
+                    type="text"
+                    placeholder={t.itemDescriptionPlaceholder}
+                    value={item.description}
+                    onChange={e => updateItem(item.id, 'description', e.target.value)}
+                    aria-label={t.description}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor={`item-qty-${item.id}`} className="sr-only">{t.quantity}</label>
+                  <input
+                    id={`item-qty-${item.id}`}
+                    type="number"
+                    min="1"
+                    value={item.quantity}
+                    onChange={e => updateItem(item.id, 'quantity', parseFloat(e.target.value))}
+                    aria-label={t.quantity}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor={`item-price-${item.id}`} className="sr-only">{t.price}</label>
+                  <input
+                    id={`item-price-${item.id}`}
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={item.unitPrice}
+                    onChange={e => updateItem(item.id, 'unitPrice', parseFloat(e.target.value))}
+                    aria-label={t.unitPrice}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor={`item-vat-${item.id}`} className="sr-only">{t.vatPercent}</label>
+                  <select
+                    id={`item-vat-${item.id}`}
+                    value={item.vatRate}
+                    onChange={e => updateItem(item.id, 'vatRate', parseFloat(e.target.value))}
+                    aria-label={t.vatPercent}
+                  >
+                    <option value="20">20%</option>
+                    <option value="10">10%</option>
+                    <option value="5.5">5.5%</option>
+                    <option value="2.1">2.1%</option>
+                    <option value="0">0%</option>
+                  </select>
+                </div>
+                <button className="btn-icon" onClick={() => removeItem(item.id)} aria-label={t.deleteItem}>
                   <Trash2 size={16} className="text-danger" />
                 </button>
               </div>
@@ -270,13 +295,13 @@ function App() {
 
         {/* WebMCP Fixed Overlay Modal */}
         {showWebMcpModal && (
-          <div className="modal-backdrop" onClick={() => setShowWebMcpModal(false)}>
+          <div className="modal-backdrop" onClick={() => setShowWebMcpModal(false)} role="dialog" aria-modal="true" aria-labelledby="webmcp-modal-title">
             <div className="modal-container" onClick={e => e.stopPropagation()}>
               <div className="flex-between mb-4">
-                <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <h3 id="webmcp-modal-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Cpu size={18} className="text-primary" /> WebMCP IA API & Guide de Connexion
                 </h3>
-                <button className="btn-icon" onClick={() => setShowWebMcpModal(false)}>✕</button>
+                <button className="btn-icon" onClick={() => setShowWebMcpModal(false)} aria-label="Close WebMCP modal">✕</button>
               </div>
 
               {/* Navigation Tabs */}
@@ -506,13 +531,13 @@ console.log(result);`}
 
         {/* FAQ Modal */}
         {showFaqModal && (
-          <div className="modal-backdrop" onClick={() => setShowFaqModal(false)}>
+          <div className="modal-backdrop" onClick={() => setShowFaqModal(false)} role="dialog" aria-modal="true" aria-labelledby="faq-modal-title">
             <div className="modal-container" onClick={e => e.stopPropagation()}>
               <div className="flex-between mb-4">
-                <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <h3 id="faq-modal-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <HelpCircle size={18} className="text-primary" /> {t.faqTitle}
                 </h3>
-                <button className="btn-icon" onClick={() => setShowFaqModal(false)}>✕</button>
+                <button className="btn-icon" onClick={() => setShowFaqModal(false)} aria-label={lang === 'fr' ? 'Fermer les FAQ' : 'Close FAQ'}>✕</button>
               </div>
               <div className="faq-modal-content">
                 <details className="faq-card" open>
@@ -543,12 +568,12 @@ console.log(result);`}
       </div>
 
       {/* Preview Section */}
-      <div className="preview-section">
+      <div className="preview-section" aria-label="Invoice preview">
         <div className="invoice-preview">
           <div className="invoice-preview-header">
             <div className="invoice-preview-title">
-              <h1>{t.invoice}</h1>
-              <div className="facturx-badge">
+              <h2>{t.invoice}</h2>
+              <div className="facturx-badge" aria-label={t.facturxCompliant}>
                 <CheckCircle size={16} /> {t.facturxCompliant}
               </div>
             </div>
