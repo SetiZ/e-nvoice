@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, Trash2, Download, CheckCircle, Globe, Cpu, HelpCircle } from 'lucide-react';
 import type { Invoice, Party, LineItem } from './types.ts';
+import { generateFacturX } from './utils/pdfGenerator.ts';
 import { translations, type Language } from './i18n.ts';
 import { WEBMCP_TOOLS } from './utils/webMcp.ts';
 import './index.css';
@@ -77,8 +78,6 @@ function App() {
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
-      // Dynamically import PDF libraries only when needed (code-splitting)
-      const { generateFacturX } = await import('./utils/pdfGenerator.ts');
       await generateFacturX(invoice, lang);
     } catch (error) {
       console.error('Failed to generate Factur-X', error);
