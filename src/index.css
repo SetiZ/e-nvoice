@@ -94,7 +94,7 @@ h3 { font-size: 1.25rem; }
 /* Layout Utilities */
 .app-container {
   display: flex;
-  min-height: 100vh;
+  flex: 1;
   width: 100%;
 }
 
@@ -674,6 +674,26 @@ input::placeholder, textarea::placeholder {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* Footer */
+.app-footer {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.app-footer a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.app-footer a:hover {
+  text-decoration: underline;
 }
 
 /* Responsive */

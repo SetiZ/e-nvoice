@@ -51,7 +51,8 @@ export const translations = {
     faq4Q: 'Are invoices compatible with Chorus Pro?',
     faq4A: 'Yes! e-nvoice generates Factur-X / EN 16931 invoices that are fully compatible with Chorus Pro. You can manually upload the generated PDF to the Chorus Pro portal, or transmit it via their API or a PDP (Partner Dematerialization Platform).',
     faq5Q: 'How do I use e-nvoice with AI assistants?',
-    faq5A: 'e-nvoice exposes a WebMCP server in your browser. AI assistants can use window.mcp.callTool() to generate, validate, or calculate invoices. See the WebMCP modal in the app for platform-specific instructions (Claude, Gemini, ChatGPT, etc.).'
+    faq5A: 'e-nvoice exposes a WebMCP server in your browser. AI assistants can use window.mcp.callTool() to generate, validate, or calculate invoices. See the WebMCP modal in the app for platform-specific instructions (Claude, Gemini, ChatGPT, etc.).',
+    footerAttribution: 'Created by SetiZ on GitHub',
   },
   fr: {
     createInvoice: 'Créer une Facture',
@@ -105,7 +106,8 @@ export const translations = {
     faq4Q: 'Les factures sont-elles compatibles avec Chorus Pro ?',
     faq4A: 'Oui ! e-nvoice génère des factures Factur-X / EN 16931 entièrement compatibles avec Chorus Pro. Vous pouvez télécharger manuellement le PDF généré sur le portail Chorus Pro, ou le transmettre via leur API ou une PDP (Plateforme de Dématérialisation Partenaire).',
     faq5Q: 'Comment utiliser e-nvoice avec les assistants IA ?',
-    faq5A: 'e-nvoice expose un serveur WebMCP directement dans votre navigateur. Les assistants IA peuvent utiliser window.mcp.callTool() pour générer, valider ou calculer des factures. Consultez la modale WebMCP dans l\'application pour des instructions spécifiques par plateforme (Claude, Gemini, ChatGPT, etc.).'
+    faq5A: 'e-nvoice expose un serveur WebMCP directement dans votre navigateur. Les assistants IA peuvent utiliser window.mcp.callTool() pour générer, valider ou calculer des factures. Consultez la modale WebMCP dans l\'application pour des instructions spécifiques par plateforme (Claude, Gemini, ChatGPT, etc.).',
+    footerAttribution: 'Créé par SetiZ sur GitHub'
   }
 };
 

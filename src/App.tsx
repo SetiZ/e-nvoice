@@ -95,9 +95,10 @@ function App() {
   };
 
   return (
-    <div className="app-container" role="main">
-      {/* Form Section */}
-      <div className="form-section">
+    <>
+      <div className="app-container" role="main">
+        {/* Form Section */}
+        <div className="form-section">
         <div className="glass-card mb-4 flex-between">
           <div>
             <h1>{t.createInvoice}</h1>
@@ -651,7 +652,13 @@ console.log(result);`}
 
         </div>
       </div>
-    </div>
+      </div>
+      <footer className="app-footer">
+        <a href="https://github.com/SetiZ/e-nvoice" target="_blank" rel="noopener noreferrer">
+          {t.footerAttribution}
+        </a>
+      </footer>
+    </>
   );
 }
 
