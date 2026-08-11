@@ -162,7 +162,7 @@ input::placeholder, textarea::placeholder {
 
 .btn-primary {
   background-color: var(--primary-color);
-  color: white;
+  color: #0f172a;
   box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4);
 }
 
@@ -170,6 +170,7 @@ input::placeholder, textarea::placeholder {
   background-color: var(--primary-hover);
   transform: translateY(-1px);
   box-shadow: 0 6px 8px -1px rgba(59, 130, 246, 0.5);
+  color: #0f172a;
 }
 
 .btn-primary:active {
@@ -357,7 +358,7 @@ input::placeholder, textarea::placeholder {
   align-items: center;
   gap: 0.5rem;
   background: #ecfdf5;
-  color: #059669;
+  color: #065f46;
   padding: 0.5rem 1rem;
   border-radius: 9999px;
   font-weight: 500;

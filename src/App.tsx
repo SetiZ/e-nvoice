@@ -102,7 +102,7 @@ function App() {
               className="btn btn-secondary"
               onClick={() => setShowWebMcpModal(!showWebMcpModal)}
               title={t.webMcpTooltip}
-              style={{ color: '#60a5fa', borderColor: '#60a5fa' }}
+              style={{ color: '#93c5fd', borderColor: '#93c5fd' }}
               aria-label={t.webMcpTooltip}
             >
               <Cpu size={18} /> WebMCP
@@ -111,7 +111,7 @@ function App() {
               className="btn btn-secondary"
               onClick={() => setShowFaqModal(!showFaqModal)}
               title={lang === 'fr' ? 'Foire Aux Questions' : 'Frequently Asked Questions'}
-              style={{ color: '#fbbf24', borderColor: '#fbbf24' }}
+              style={{ color: '#fde047', borderColor: '#fde047' }}
               aria-label={lang === 'fr' ? 'Foire Aux Questions' : 'Frequently Asked Questions'}
             >
               <HelpCircle size={18} /> {lang === 'fr' ? 'FAQ' : 'FAQ'}
@@ -225,18 +225,18 @@ function App() {
             </button>
           </div>
 
-          <div className="line-item-header" role="rowgroup">
-            <div role="columnheader">{t.description}</div>
-            <div role="columnheader">{t.quantity}</div>
-            <div role="columnheader">{t.price}</div>
-            <div role="columnheader">{t.vatPercent}</div>
-            <div role="columnheader" style={{ width: 36 }} aria-label="Actions"></div>
+          <div className="line-item-header">
+            <div>{t.description}</div>
+            <div>{t.quantity}</div>
+            <div>{t.price}</div>
+            <div>{t.vatPercent}</div>
+            <div style={{ width: 36 }}></div>
           </div>
 
-          <div className="line-items-container" role="rowgroup" aria-labelledby="line-items-heading">
+          <div className="line-items-container" role="list" aria-label="Invoice line items">
             {invoice.items.map(item => (
-              <div key={item.id} className="line-item" role="row">
-                <div className="form-group">
+              <div key={item.id} className="line-item" role="listitem">
+                <div>
                   <label htmlFor={`item-desc-${item.id}`} className="sr-only">{t.description}</label>
                   <input
                     id={`item-desc-${item.id}`}
@@ -244,10 +244,9 @@ function App() {
                     placeholder={t.itemDescriptionPlaceholder}
                     value={item.description}
                     onChange={e => updateItem(item.id, 'description', e.target.value)}
-                    aria-label={t.description}
                   />
                 </div>
-                <div className="form-group">
+                <div>
                   <label htmlFor={`item-qty-${item.id}`} className="sr-only">{t.quantity}</label>
                   <input
                     id={`item-qty-${item.id}`}
@@ -255,10 +254,9 @@ function App() {
                     min="1"
                     value={item.quantity}
                     onChange={e => updateItem(item.id, 'quantity', parseFloat(e.target.value))}
-                    aria-label={t.quantity}
                   />
                 </div>
-                <div className="form-group">
+                <div>
                   <label htmlFor={`item-price-${item.id}`} className="sr-only">{t.price}</label>
                   <input
                     id={`item-price-${item.id}`}
@@ -267,16 +265,14 @@ function App() {
                     step="0.01"
                     value={item.unitPrice}
                     onChange={e => updateItem(item.id, 'unitPrice', parseFloat(e.target.value))}
-                    aria-label={t.unitPrice}
                   />
                 </div>
-                <div className="form-group">
+                <div>
                   <label htmlFor={`item-vat-${item.id}`} className="sr-only">{t.vatPercent}</label>
                   <select
                     id={`item-vat-${item.id}`}
                     value={item.vatRate}
                     onChange={e => updateItem(item.id, 'vatRate', parseFloat(e.target.value))}
-                    aria-label={t.vatPercent}
                   >
                     <option value="20">20%</option>
                     <option value="10">10%</option>
@@ -354,7 +350,7 @@ function App() {
                     </p>
                   </div>
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                    <p style={{ fontWeight: 600, color: '#93c5fd', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
                       🎯 {t.selectMethod}:
                     </p>
                   </div>
@@ -385,7 +381,7 @@ function App() {
                   {activePlatform === 'universal' && (
                     <div>
                       <div style={{ marginBottom: '1.25rem' }}>
-                        <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
+                        <p style={{ fontWeight: 600, color: '#93c5fd', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
                           {lang === 'fr' ? 'Méthode la plus simple : Console du navigateur' : 'Simplest method: Browser console'}
                         </p>
                         <p className="text-secondary" style={{ fontSize: '0.85rem', marginBottom: '0.75rem' }}>
@@ -419,7 +415,7 @@ await window.mcp.callTool('generate_facturx_invoice', {
                         </pre>
                       </div>
                       <div>
-                        <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
+                        <p style={{ fontWeight: 600, color: '#93c5fd', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
                           {lang === 'fr' ? 'Autres outils disponibles' : 'Other available tools'}
                         </p>
                         <ul style={{ fontSize: '0.85rem', marginTop: '0.5rem' }}>
@@ -435,7 +431,7 @@ await window.mcp.callTool('generate_facturx_invoice', {
                   {activePlatform === 'postmessage' && (
                     <div>
                       <div style={{ marginBottom: '1.25rem' }}>
-                        <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
+                        <p style={{ fontWeight: 600, color: '#93c5fd', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
                           {lang === 'fr' ? 'Pour les intégrations externes : JSON-RPC via postMessage' : 'For external integrations: JSON-RPC via postMessage'}
                         </p>
                         <p className="text-secondary" style={{ fontSize: '0.85rem', marginBottom: '0.75rem' }}>
@@ -476,7 +472,7 @@ window.addEventListener('message', (event) => {
                   {activePlatform === 'chrome' && (
                     <div>
                       <div style={{ marginBottom: '1.25rem' }}>
-                        <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
+                        <p style={{ fontWeight: 600, color: '#93c5fd', marginBottom: '0.25rem', fontSize: '0.9rem' }}>
                           {lang === 'fr' ? 'Pourquoi WebMCP n\'apparaît pas dans Chrome DevTools ?' : 'Why doesn\'t WebMCP appear in Chrome DevTools?'}
                         </p>
                         <p className="text-secondary" style={{ fontSize: '0.85rem', lineHeight: 1.6 }}>
@@ -512,7 +508,7 @@ console.log(result);`}
                   )}
 
                   <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid rgba(96, 165, 250, 0.2)' }}>
-                    <p style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                    <p style={{ fontWeight: 600, color: '#93c5fd', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
                       📚 {lang === 'fr' ? 'Ressources de découverte' : 'Discovery Resources'}
                     </p>
                     <p className="text-secondary" style={{ fontSize: '0.85rem' }}>
