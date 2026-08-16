@@ -1,8 +1,11 @@
 import type { Invoice } from '../types.ts';
 
+type GenerateFacturXFn = (invoice: Invoice, lang?: 'en' | 'fr') => Promise<void>;
+type GenerateFacturXXmlFn = (invoice: Invoice) => string;
+
 // Lazy load PDF generator
-let generateFacturXPromise: Promise<any> | null = null;
-const getGenerateFacturX = async () => {
+let generateFacturXPromise: Promise<GenerateFacturXFn> | null = null;
+const getGenerateFacturX = async (): Promise<GenerateFacturXFn> => {
   if (!generateFacturXPromise) {
     generateFacturXPromise = import('./pdfGenerator.ts').then(m => m.generateFacturX);
   }
@@ -10,8 +13,8 @@ const getGenerateFacturX = async () => {
 };
 
 // Lazy load Factur-X XML generator
-let generateFacturXXmlPromise: Promise<any> | null = null;
-const getGenerateFacturXXml = async () => {
+let generateFacturXXmlPromise: Promise<GenerateFacturXXmlFn> | null = null;
+const getGenerateFacturXXml = async (): Promise<GenerateFacturXXmlFn> => {
   if (!generateFacturXXmlPromise) {
     generateFacturXXmlPromise = import('./facturx.ts').then(m => m.generateFacturXXml);
   }

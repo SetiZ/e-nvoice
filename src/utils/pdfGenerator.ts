@@ -137,7 +137,7 @@ export async function generateFacturX(invoice: Invoice, lang: Language = 'en') {
   });
 
   // 4. Inject strict PDF/A-3 and Factur-X XMP Metadata
-  const xmpString = `<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
+  const xmpString = `<?xpacket begin="\uFEFF" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/">
   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <rdf:Description rdf:about="" xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/">
@@ -155,34 +155,30 @@ export async function generateFacturX(invoice: Invoice, lang: Language = 'en') {
             <pdfaSchema:schema>Factur-X PDFA Extension Schema</pdfaSchema:schema>
             <pdfaSchema:namespaceURI>urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0#</pdfaSchema:namespaceURI>
             <pdfaSchema:prefix>fx</pdfaSchema:prefix>
-            <pdfaSchema:property>
-              <rdf:Seq>
+            <pdfaProperty:property>
+              <rdf:Bag>
                 <rdf:li rdf:parseType="Resource">
                   <pdfaProperty:name>DocumentFileName</pdfaProperty:name>
                   <pdfaProperty:valueType>Text</pdfaProperty:valueType>
-                  <pdfaProperty:category>external</pdfaProperty:category>
-                  <pdfaProperty:description>name of the embedded XML invoice file</pdfaProperty:description>
+                  <pdfaProperty:description>The name of the embedded XML document</pdfaProperty:description>
                 </rdf:li>
                 <rdf:li rdf:parseType="Resource">
                   <pdfaProperty:name>DocumentType</pdfaProperty:name>
                   <pdfaProperty:valueType>Text</pdfaProperty:valueType>
-                  <pdfaProperty:category>external</pdfaProperty:category>
-                  <pdfaProperty:description>INVOICE</pdfaProperty:description>
+                  <pdfaProperty:description>The type of the hybrid document in accordance with Factur-X standard</pdfaProperty:description>
                 </rdf:li>
                 <rdf:li rdf:parseType="Resource">
                   <pdfaProperty:name>Version</pdfaProperty:name>
                   <pdfaProperty:valueType>Text</pdfaProperty:valueType>
-                  <pdfaProperty:category>external</pdfaProperty:category>
-                  <pdfaProperty:description>The actual version of the ZUGFeRD data</pdfaProperty:description>
+                  <pdfaProperty:description>The version of the Factur-X XML schema</pdfaProperty:description>
                 </rdf:li>
                 <rdf:li rdf:parseType="Resource">
                   <pdfaProperty:name>ConformanceLevel</pdfaProperty:name>
                   <pdfaProperty:valueType>Text</pdfaProperty:valueType>
-                  <pdfaProperty:category>external</pdfaProperty:category>
-                  <pdfaProperty:description>The conformance level of the ZUGFeRD data</pdfaProperty:description>
+                  <pdfaProperty:description>The conformance level of the Factur-X XML data</pdfaProperty:description>
                 </rdf:li>
-              </rdf:Seq>
-            </pdfaSchema:property>
+              </rdf:Bag>
+            </pdfaProperty:property>
           </rdf:li>
         </rdf:Bag>
       </pdfaExtension:schemas>
@@ -207,7 +203,7 @@ export async function generateFacturX(invoice: Invoice, lang: Language = 'en') {
 
   // Save the hybrid PDF
   const modifiedPdfBytes = await pdfDoc.save();
-  const modifiedPdfBlob = new Blob([modifiedPdfBytes as any], { type: 'application/pdf' });
+  const modifiedPdfBlob = new Blob([modifiedPdfBytes as unknown as BlobPart], { type: 'application/pdf' });
 
   // 5. Trigger Download
   const downloadFile = (blob: Blob, filename: string) => {

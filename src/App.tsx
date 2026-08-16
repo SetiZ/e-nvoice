@@ -96,7 +96,7 @@ function App() {
 
   return (
     <>
-      <div className="app-container" role="main">
+      <main className="app-container">
         {/* Form Section */}
         <div className="form-section">
         <div className="glass-card mb-4 flex-between">
@@ -260,7 +260,7 @@ function App() {
                     type="number"
                     min="1"
                     value={item.quantity}
-                    onChange={e => updateItem(item.id, 'quantity', parseFloat(e.target.value))}
+                    onChange={e => updateItem(item.id, 'quantity', parseFloat(e.target.value) || 0)}
                   />
                 </div>
                 <div>
@@ -271,7 +271,7 @@ function App() {
                     min="0"
                     step="0.01"
                     value={item.unitPrice}
-                    onChange={e => updateItem(item.id, 'unitPrice', parseFloat(e.target.value))}
+                    onChange={e => updateItem(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
                   />
                 </div>
                 <div>
@@ -623,8 +623,8 @@ console.log(result);`}
               </tr>
             </thead>
             <tbody>
-              {invoice.items.map((item, index) => (
-                <tr key={item.id || index}>
+              {invoice.items.map((item) => (
+                <tr key={item.id}>
                   <td>{item.description || '-'}</td>
                   <td className="text-right">{item.quantity}</td>
                   <td className="text-right">{item.unitPrice.toFixed(2)} €</td>
@@ -652,7 +652,7 @@ console.log(result);`}
 
         </div>
       </div>
-      </div>
+    </main>
       <footer className="app-footer">
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
           <a href="https://github.com/SetiZ/e-nvoice" target="_blank" rel="noopener noreferrer">
