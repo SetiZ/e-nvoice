@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Sitemap URL
+Sitemap: https://setiz.github.io/e-nvoice/sitemap.xml
+
+# AI / LLM Context Documentation (AEO / GEO)
+# https://setiz.github.io/e-nvoice/llms.txt
+# https://setiz.github.io/e-nvoice/llms-full.txt

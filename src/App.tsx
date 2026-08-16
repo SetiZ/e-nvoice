@@ -654,9 +654,30 @@ console.log(result);`}
       </div>
       </div>
       <footer className="app-footer">
-        <a href="https://github.com/SetiZ/e-nvoice" target="_blank" rel="noopener noreferrer">
-          {t.footerAttribution}
-        </a>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
+          <a href="https://github.com/SetiZ/e-nvoice" target="_blank" rel="noopener noreferrer">
+            {t.footerAttribution}
+          </a>
+          <span style={{ opacity: 0.3 }}>|</span>
+          <a href="/e-nvoice/sitemap.xml" target="_blank" rel="noopener noreferrer" title="Sitemap XML">
+            Sitemap
+          </a>
+          <span style={{ opacity: 0.3 }}>|</span>
+          <a href="/e-nvoice/llms.txt" target="_blank" rel="noopener noreferrer" title="AI & LLM Context Documentation">
+            llms.txt
+          </a>
+          <span style={{ opacity: 0.3 }}>|</span>
+          <a href="/e-nvoice/llms-full.txt" target="_blank" rel="noopener noreferrer" title="Full LLM Specification">
+            llms-full.txt
+          </a>
+          <span style={{ opacity: 0.3 }}>|</span>
+          <a href="/e-nvoice/openapi.json" target="_blank" rel="noopener noreferrer" title="OpenAPI Schema Specification">
+            OpenAPI Spec
+          </a>
+        </div>
+        <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>
+          Factur-X / EN 16931 (PDF/A-3 + UN/CEFACT CII) • Réforme 2026 • 100% Client-Side Privacy
+        </div>
       </footer>
     </>
   );

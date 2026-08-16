@@ -4,6 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/e-nvoice/apple-touch-icon.png" />
+  <link rel="manifest" href="/e-nvoice/site.webmanifest" />
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="/e-nvoice/sitemap.xml" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <!-- Preconnect to CDN for pdf-lib external dependencies -->
@@ -21,8 +24,11 @@
   <!-- Preload main app module -->
   <link rel="modulepreload" href="/src/main.tsx" />
   
-  <!-- Theme color for PWA -->
+  <!-- Theme color & Mobile PWA capabilities -->
   <meta name="theme-color" content="#0f172a" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="e-nvoice" />
 
   <!-- Primary SEO -->
   <title>e-nvoice - Générateur Gratuit Factur-X & EN 16931 (Conforme Réforme 2026)</title>
@@ -30,53 +36,167 @@
   <meta name="description"
     content="Créez et téléchargez gratuitement vos factures électroniques au format Factur-X / EN 16931 (PDF/A-3 + XML). 100% sécurisé et traité localement dans votre navigateur, sans aucun serveur." />
   <meta name="keywords"
-    content="factur-x, facture electronique 2026, en 16931, pdf a3 xml, générateur factur-x gratuit, reforme facturation france, webmcp, aeo, geo, facturation confidentielle" />
-  <meta name="author" content="e-nvoice" />
+    content="factur-x, facture electronique 2026, en 16931, pdf a3 xml, générateur factur-x gratuit, reforme facturation france, chorus pro, webmcp, aeo, geo, facturation confidentielle" />
+  <meta name="author" content="SetiZ" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://setiz.github.io/e-nvoice/" />
 
-  <!-- Open Graph / Facebook -->
+  <!-- Alternate Languages & Hreflang -->
+  <link rel="alternate" hreflang="fr" href="https://setiz.github.io/e-nvoice/" />
+  <link rel="alternate" hreflang="en" href="https://setiz.github.io/e-nvoice/" />
+  <link rel="alternate" hreflang="x-default" href="https://setiz.github.io/e-nvoice/" />
+
+  <!-- AI / AEO / GEO Discovery Metadata -->
+  <link rel="alternate" type="text/plain" href="https://setiz.github.io/e-nvoice/llms.txt" title="AI/LLM Context" />
+  <link rel="service-desc" type="application/json" href="https://setiz.github.io/e-nvoice/openapi.json" />
+  <meta name="ai-agent-ready" content="true" />
+  <meta name="webmcp-endpoint" content="window.mcp" />
+
+  <!-- Open Graph / Facebook / LinkedIn / Slack -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://setiz.github.io/e-nvoice/" />
-  <meta property="og:title" content="e-nvoice - Générateur Gratuit de Factures Factur-X & EN 16931" />
+  <meta property="og:title" content="e-nvoice - Générateur Gratuit Factur-X & EN 16931 (Conforme Réforme 2026)" />
   <meta property="og:description"
-    content="Générez instantanément des factures électroniques conforme Factur-X (PDF/A-3 + XML). Gratuit, sécurisé et 100% côté client." />
+    content="Générez instantanément des factures électroniques conformes Factur-X (PDF/A-3 + XML). Gratuit, 100% confidentiel et exécuté localement dans votre navigateur." />
   <meta property="og:site_name" content="e-nvoice" />
   <meta property="og:locale" content="fr_FR" />
+  <meta property="og:image" content="https://setiz.github.io/e-nvoice/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="e-nvoice - Générateur Gratuit Factur-X & EN 16931" />
 
-  <!-- Twitter -->
+  <!-- Twitter / X -->
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content="https://setiz.github.io/e-nvoice/" />
   <meta property="twitter:title" content="e-nvoice - Générateur Gratuit Factur-X / EN 16931" />
   <meta property="twitter:description"
-    content="Générez vos factures électroniques au format Factur-X (PDF/A-3 hybride). Client-side et confidentiel." />
+    content="Générez vos factures électroniques au format Factur-X (PDF/A-3 hybride). Client-side, gratuit et 100% confidentiel." />
+  <meta property="twitter:image" content="https://setiz.github.io/e-nvoice/og-image.png" />
 
-  <!-- AI / AEO / GEO Structured Data (JSON-LD) -->
+  <!-- Structured Data Graph (JSON-LD for SEO, AEO & GEO) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "Organization",
+        "@id": "https://setiz.github.io/e-nvoice/#organization",
+        "name": "SetiZ",
+        "url": "https://github.com/SetiZ/e-nvoice",
+        "logo": "https://setiz.github.io/e-nvoice/apple-touch-icon.png"
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://setiz.github.io/e-nvoice/#website",
+        "url": "https://setiz.github.io/e-nvoice/",
+        "name": "e-nvoice",
+        "description": "Générateur gratuit de factures électroniques Factur-X & EN 16931 conforme à la réforme 2026.",
+        "publisher": {
+          "@id": "https://setiz.github.io/e-nvoice/#organization"
+        },
+        "inLanguage": ["fr-FR", "en-US"]
+      },
+      {
         "@type": "WebApplication",
         "@id": "https://setiz.github.io/e-nvoice/#webapp",
         "name": "e-nvoice",
         "url": "https://setiz.github.io/e-nvoice/",
+        "image": "https://setiz.github.io/e-nvoice/og-image.png",
+        "screenshot": "https://setiz.github.io/e-nvoice/og-image.png",
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "All",
+        "inLanguage": ["fr", "en"],
+        "author": {
+          "@id": "https://setiz.github.io/e-nvoice/#organization"
+        },
+        "publisher": {
+          "@id": "https://setiz.github.io/e-nvoice/#organization"
+        },
         "offers": {
           "@type": "Offer",
           "price": "0",
           "priceCurrency": "EUR"
         },
-        "description": "Générateur de factures électroniques conforme à la norme hybride Factur-X / EN 16931. Produit des fichiers PDF/A-3 contenant le XML UN/CEFACT CrossIndustryInvoice. Intègre une API WebMCP (bêta) pour l'automatisation côté client.",
+        "description": "Générateur de factures électroniques conforme à la norme hybride Factur-X / EN 16931. Produit des fichiers PDF/A-3 contenant le XML UN/CEFACT CrossIndustryInvoice. Intègre une API WebMCP pour l'automatisation par assistants IA.",
         "browserRequirements": "Requires JavaScript. Works in Chrome, Firefox, Safari, Edge.",
-        "softwareRequirements": "No installation required. Runs entirely client-side.",
+        "softwareRequirements": "No installation required. Runs entirely client-side in browser.",
         "featureList": [
           "Génération conforme Factur-X (Basic / EN 16931)",
-          "Inclusion automatique des métadonnées XML UN/CEFACT",
+          "Inclusion automatique des métadonnées XML UN/CEFACT CrossIndustryInvoice",
           "Traitement 100% local dans le navigateur (Zéro serveur)",
-          "API WebMCP (Beta) pour automatisation côté client",
-          "Factures compatibles avec Chorus Pro (B2B/B2G 2026)"
+          "API WebMCP (Beta) pour automatisation par agents IA",
+          "Factures 100% compatibles Chorus Pro (B2B/B2G 2026)"
+        ]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://setiz.github.io/e-nvoice/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "e-nvoice",
+            "item": "https://setiz.github.io/e-nvoice/"
+          }
+        ]
+      },
+      {
+        "@type": "HowTo",
+        "@id": "https://setiz.github.io/e-nvoice/#howto",
+        "name": "Comment créer une facture Factur-X conforme 2026 gratuitement",
+        "description": "Guide simple pour générer un fichier hybride Factur-X (PDF/A-3 avec XML EN 16931 intégré) prêt pour Chorus Pro et la réforme de facturation.",
+        "step": [
+          {
+            "@type": "HowToStep",
+            "position": 1,
+            "name": "Saisir les coordonnées",
+            "text": "Renseignez le nom, l'adresse, le numéro SIRET et le numéro de TVA de l'émetteur (vendeur) et du client (acheteur)."
+          },
+          {
+            "@type": "HowToStep",
+            "position": 2,
+            "name": "Ajouter les prestations ou articles",
+            "text": "Indiquez la description, la quantité, le prix unitaire HT et le taux de TVA pour chaque ligne de facturation."
+          },
+          {
+            "@type": "HowToStep",
+            "position": 3,
+            "name": "Générer et télécharger la facture Factur-X",
+            "text": "Cliquez sur 'Générer Factur-X'. Le fichier PDF/A-3 intégrant le schéma XML conforme est produit localement et téléchargé immédiatement."
+          }
+        ]
+      },
+      {
+        "@type": "DefinedTermSet",
+        "@id": "https://setiz.github.io/e-nvoice/#terms",
+        "name": "Glossaire Factur-X et Facturation Électronique",
+        "hasDefinedTerm": [
+          {
+            "@type": "DefinedTerm",
+            "name": "Factur-X",
+            "description": "Standard hybride de facture électronique combinant un document PDF/A-3 lisible et des données XML structurées EN 16931."
+          },
+          {
+            "@type": "DefinedTerm",
+            "name": "EN 16931",
+            "description": "Norme européenne définissant le modèle sémantique de données pour les factures électroniques."
+          },
+          {
+            "@type": "DefinedTerm",
+            "name": "PDF/A-3",
+            "description": "Norme d'archivage PDF autorisant l'intégration de fichiers annexes comme le XML Factur-X."
+          },
+          {
+            "@type": "DefinedTerm",
+            "name": "Chorus Pro",
+            "description": "Portail public de dématérialisation des factures pour le secteur public (B2G) et la réforme inter-entreprises (B2B)."
+          },
+          {
+            "@type": "DefinedTerm",
+            "name": "WebMCP",
+            "description": "Protocole Model Context Protocol exécuté nativement dans le navigateur pour permettre l'interaction sécurisée des assistants IA."
+          }
         ]
       },
       {
@@ -117,26 +237,10 @@
           },
           {
             "@type": "Question",
-            "name": "How do I submit e-nvoice invoices to Chorus Pro?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Generated Factur-X PDF files from e-nvoice can be uploaded directly to the Chorus Pro web portal (https://portail.chorus-pro.gouv.fr) by selecting 'Structured file (Factur-X/UBL)' deposit option. They are also compatible with Chorus Pro API and PDP platforms."
-            }
-          },
-          {
-            "@type": "Question",
             "name": "Les factures e-nvoice sont-elles compatibles avec Chorus Pro ?",
             "acceptedAnswer": {
               "@type": "Answer",
               "text": "Oui, les factures Factur-X générées par e-nvoice sont 100% compatibles avec Chorus Pro. Vous pouvez les déposer manuellement sur le portail Chorus Pro ou les transmettre via l'API ou une plateforme PDP."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Which AI platforms can use the e-nvoice WebMCP API?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The WebMCP API works with Claude (Desktop & Browser Extension), Gemini (via Chrome DevTools), ChatGPT (Custom GPT Actions), Chrome AI, Mistral Vibe, and any MCP-compatible client. Use window.mcp.callTool() or postMessage JSON-RPC."
             }
           },
           {

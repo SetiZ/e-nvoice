@@ -1,41 +1,29 @@
 # e-nvoice - Factur-X / EN 16931 Invoice Generator
 
-> e-nvoice is a free, privacy-first, client-side web application for generating Factur-X / EN 16931 compliant electronic invoices (hybrid PDF/A-3 + UN/CEFACT XML).
+> e-nvoice is a free, privacy-first, client-side web application for generating Factur-X / EN 16931 compliant electronic invoices (hybrid PDF/A-3 + UN/CEFACT XML) for French 2026 B2B/B2G regulations.
 
-## Core Capabilities
+## Core Capabilities & Key Facts
 - **Factur-X Standard**: Generates compliant hybrid PDF/A-3 documents embedded with `factur-x.xml` (UN/CEFACT CrossIndustryInvoice v100).
-- **French 2026 Mandate Ready**: Meets the B2B electronic invoicing requirements for France (EN 16931 standard).
-- **100% Client-Side**: Zero data sent to servers. PDF and XML rendering occurs entirely inside the user's browser.
-- **WebMCP (Beta)**: Exposes in-browser Model Context Protocol endpoints over `window.mcp` and `postMessage` for scripts and extensions.
-- **Chorus Pro Compatible**: Generated Factur-X PDFs can be uploaded directly to Chorus Pro portal (B2G/B2B).
+- **French 2026 Mandate Ready**: Fully satisfies the mandatory electronic invoicing requirements for France (EN 16931 & CIUS profiles).
+- **100% Client-Side Privacy**: Zero data sent to external servers. All PDF and XML rendering occurs locally inside the user's browser.
+- **WebMCP Integration (Beta)**: Exposes in-browser Model Context Protocol endpoints over `window.mcp` and `postMessage` for AI scripts and extensions.
+- **Chorus Pro Compatible**: Generated Factur-X PDFs can be uploaded directly to the French government Chorus Pro portal (`portail.chorus-pro.gouv.fr`).
 
-## Quick Facts
+## Summary Technical Specifications
 - Application URL: https://setiz.github.io/e-nvoice/
-- Supported Formats: Factur-X / EN 16931, PDF/A-3, CrossIndustryInvoice XML
-- Price: 100% Free & Open Source
-- Privacy: Zero tracking, zero server side processing
-- License: MIT
+- Supported Profiles: Factur-X MINIMUM, BASIC, BASIC WL, EN 16931
+- Underlying Formats: PDF/A-3 (ISO 19005-3), UN/CEFACT CII D16B XML
+- Cost: 100% Free & Open Source (MIT License)
+- Server Dependency: None (Runs completely in browser)
 
-## WebMCP Tools (Beta) - Available via `window.mcp.callTool()`
-> ⚠️ **Important**: WebMCP API only works from within the e-nvoice page itself due to browser security restrictions. External AI platforms cannot access it directly.
-
+## AI Agent WebMCP Tools (`window.mcp.callTool()`)
 - `calculate_invoice_totals`: Calculates subtotal HT, VAT totals, and total TTC from invoice line items.
 - `validate_invoice_data`: Validates mandatory fields (invoice number, date, seller/buyer names, SIRET, VAT numbers, line items) against EN 16931 requirements.
 - `generate_facturx_xml`: Generates raw Factur-X / EN 16931 XML string (UN/CEFACT CrossIndustryInvoice D16B).
 - `generate_facturx_invoice`: Generates and triggers browser download of the complete Factur-X PDF/A-3 hybrid file.
 
-## Usage Notes for AI Agents
-- **Working methods**: Direct JS execution in browser console, browser extensions, iframes via postMessage
-- **Not working**: Claude.ai web, Gemini.google.com, ChatGPT.com (cannot access cross-origin window objects)
-- **Alternative**: Guide users to execute `window.mcp.callTool()` commands in the e-nvoice page console
-
-## Chorus Pro Integration
-- Manual upload: Download PDF from e-nvoice → Upload to https://portail.chorus-pro.gouv.fr → Select "Fichier structure (Factur-X/UBL)"
-- API/EDI: Generated files compatible with Chorus Pro API and PDP (Plateforme de Dematerialisation Partenaire) platforms
-- Requirements: Valid SIRET, VAT number, unique invoice number
-
-## Specifications Referenced
-- EN 16931-1: European Standard for Electronic Invoicing
-- Factur-X 1.0.06 Specification (FNFE-MPE & FERD)
-- UN/CEFACT CrossIndustryInvoice (CII) D16B / 100
-- CIUS: Core Invoice Usage Specification (Chorus Pro profile)
+## Key Links & Resources
+- Full LLM Specification: https://setiz.github.io/e-nvoice/llms-full.txt
+- OpenAPI Schema: https://setiz.github.io/e-nvoice/openapi.json
+- WebMCP Manifest: https://setiz.github.io/e-nvoice/.well-known/mcp.json
+- Source Code: https://github.com/SetiZ/e-nvoice

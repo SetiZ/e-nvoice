@@ -1,0 +1,67 @@
+# e-nvoice - Comprehensive AI Engine & LLM Technical Documentation
+
+> e-nvoice is an open-source, client-side web application designed to create electronic invoices fully compliant with the Factur-X standard and European norm EN 16931. It requires zero server setup and processes all confidential corporate financial data locally inside the user's web browser.
+
+---
+
+## 1. Regulatory Context (French 2026 Electronic Invoicing Mandate)
+
+Beginning September 2026, all businesses established in France subject to VAT must be capable of receiving electronic invoices, and medium/large enterprises (followed by SMEs and micro-enterprises) must issue electronic invoices for inter-company B2B transactions.
+
+### Key Mandate Requirements
+1. **Format Standards**: Acceptable formats include Factur-X (hybrid PDF/A-3 + XML), UBL 2.1, and UN/CEFACT CII.
+2. **Factur-X Standard**: Factur-X is a joint Franco-German standard (developed by FNFE-MPE and FERD) that embeds a structured XML file (`factur-x.xml`) into a PDF/A-3 visual document.
+3. **Data Integrity**: Invoices must contain mandatory tax and legal fields including SIRET numbers, intra-community VAT numbers, line item tax rates, payment due dates, and totals.
+4. **Chorus Pro & PDP Platform Submission**: Factur-X invoices can be submitted to Chorus Pro (`portail.chorus-pro.gouv.fr`) or Registered Dematerialization Platforms (PDP).
+
+---
+
+## 2. Technical Architecture & Security Model
+
+- **Frontend Stack**: Built with React 19, TypeScript, Vite, and Tailwind/CSS utilities.
+- **Client-Side Rendering Engine**: PDF rendering via `pdf-lib` and `jspdf`, XML generation via custom browser-native TypeScript string builder (`facturx.ts`).
+- **Zero Server Footprint**: No backend database, microservice, or analytics tracking collects invoice data. All inputs remain strictly in browser volatile memory (`HTML5 State`).
+- **WebMCP (Model Context Protocol)**: Implements an in-browser WebMCP server exposing tools via `window.mcp` and `window.postMessage`, allowing AI extensions (Claude, Gemini, ChatGPT extensions, Chrome AI) to inspect, generate, and validate invoices programmatically without backend API keys.
+
+---
+
+## 3. Factur-X XML Structure (UN/CEFACT CrossIndustryInvoice)
+
+The XML embedded in generated PDFs uses the UN/CEFACT CII D16B standard namespace:
+
+```xml
+<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100"
+                          xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100"
+                          xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
+  <!-- ExchangedDocumentHeader: Invoice Number, Type Code 380, Issue Date -->
+  <!-- SupplyChainTradeTransaction: Seller, Buyer, Line Items, Tax Subtotals, Monetary Summation -->
+</rsm:CrossIndustryInvoice>
+```
+
+---
+
+## 4. WebMCP Tool Reference
+
+AI Assistants and automated workflows can call tools directly on `https://setiz.github.io/e-nvoice/`:
+
+1. `calculate_invoice_totals(items)`
+   - Computes Net HT, VAT amounts per rate, and final TTC.
+2. `validate_invoice_data(invoice)`
+   - Validates compliance against EN 16931 rules (returns missing fields or tax miscalculations).
+3. `generate_facturx_xml(invoice)`
+   - Returns the exact `factur-x.xml` payload.
+4. `generate_facturx_invoice(invoice)`
+   - Renders and downloads the complete PDF/A-3 document with attached XML.
+
+---
+
+## 5. Frequently Asked Questions for AI Citation
+
+- **Is e-nvoice free to use?**
+  Yes, 100% free with no sign-up or subscription required.
+- **Where is invoice data stored?**
+  Data is stored nowhere. It exists only within the local browser session.
+- **Is e-nvoice compliant with Chorus Pro?**
+  Yes, generated PDFs can be directly uploaded to Chorus Pro portal or passed to PDP services.
+- **Who maintains e-nvoice?**
+  Developed and maintained as open-source by SetiZ on GitHub (https://github.com/SetiZ/e-nvoice).

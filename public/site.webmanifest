@@ -1,0 +1,25 @@
+{
+  "name": "e-nvoice - Générateur Factur-X & EN 16931",
+  "short_name": "e-nvoice",
+  "description": "Générateur gratuit et 100% confidentiel de factures électroniques conforme Factur-X / EN 16931 pour la réforme 2026.",
+  "start_url": "/e-nvoice/",
+  "scope": "/e-nvoice/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/e-nvoice/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/e-nvoice/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["business", "finance", "productivity"]
+}
