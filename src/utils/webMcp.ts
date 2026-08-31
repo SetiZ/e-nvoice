@@ -1,4 +1,5 @@
 import type { Invoice, Party, BuyerType, OperationType } from '../types.ts';
+import { validateInvoiceData } from './invoiceValidation.ts';
 
 type GenerateFacturXFn = (invoice: Invoice, lang?: 'en' | 'fr') => Promise<void>;
 type GenerateFacturXXmlFn = (invoice: Invoice) => string;
@@ -164,16 +165,22 @@ export class WebMcpServer {
     if (!modelContext?.registerTool || typeof modelContext.registerTool !== 'function') {
       return false;
     }
+    let registered = 0;
     for (const tool of WEBMCP_TOOLS) {
-      await modelContext.registerTool({
-        name: tool.name,
-        description: tool.description,
-        inputSchema: tool.inputSchema,
-        execute: args => this.callTool(tool.name, args as Record<string, unknown>),
-        annotations: { readOnlyHint: false, untrustedContentHint: true }
-      });
+      try {
+        await modelContext.registerTool({
+          name: tool.name,
+          description: tool.description,
+          inputSchema: tool.inputSchema,
+          execute: args => this.callTool(tool.name, args as Record<string, unknown>),
+          annotations: { readOnlyHint: false, untrustedContentHint: true }
+        });
+        registered++;
+      } catch (err) {
+        console.warn(`[WebMCP] Failed to register native tool "${tool.name}"`, err);
+      }
     }
-    console.log('⚡ [WebMCP] Registered', WEBMCP_TOOLS.length, 'native tools via document.modelContext.registerTool');
+    console.log('⚡ [WebMCP] Registered', registered, 'native tools via document.modelContext.registerTool');
     return true;
   }
 
@@ -193,24 +200,7 @@ export class WebMcpServer {
       }
 
       case 'validate_invoice_data': {
-        const errors: string[] = [];
-        const seller = (args.seller || {}) as Record<string, unknown>;
-        const buyer = (args.buyer || {}) as Record<string, unknown>;
-        if (!args.number) errors.push('Invoice number is missing.');
-        if (!args.date) errors.push('Invoice issue date is missing.');
-        if (!seller.name) errors.push('Seller company name is required.');
-        if (!buyer.name) errors.push('Buyer company/client name is required.');
-        if (args.buyerType === 'business' && !buyer.siret) {
-          errors.push('Buyer SIREN/SIRET is required for B2B invoices.');
-        }
-        if (Array.isArray(args.items) && args.items.length === 0) {
-          errors.push('At least one line item is required.');
-        }
-        return {
-          valid: errors.length === 0,
-          errors,
-          compliantStandard: 'EN 16931 / Factur-X / CIUS-FR'
-        };
+        return validateInvoiceData(args);
       }
 
       case 'generate_facturx_xml': {

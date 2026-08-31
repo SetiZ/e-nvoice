@@ -35,7 +35,7 @@ Prêt pour la **réforme française 2026 de la facturation électronique B2B**, 
 | Outil | Description |
 | :--- | :--- |
 | `calculate_invoice_totals` | Calcule les sous-totaux HT, montants de TVA et total TTC à partir des lignes de facturation. |
-| `validate_invoice_data` | Vérifie la présence des champs obligatoires (SIRET, TVA, dates, lignes) selon la norme EN 16931. |
+| `validate_invoice_data` | Vérifie la présence des champs obligatoires (SIRET ou tax ID étranger pour le B2B, TVA, dates, lignes) selon la norme EN 16931. |
 | `generate_facturx_xml` | Génère le flux XML brut UN/CEFACT CrossIndustryInvoice v100. |
 | `generate_facturx_invoice` | Déclenche la création et le téléchargement du fichier PDF/A-3 hybride Factur-X. |
 

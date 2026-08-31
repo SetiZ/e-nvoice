@@ -77,12 +77,13 @@
           "number": { "type": "string" },
           "date": { "type": "string" },
           "dueDate": { "type": "string" },
-          "currency": { "type": "string" },
-          "buyerType": { "type": "string" },
-          "operationType": { "type": "string" },
+          "currency": { "type": "string", "enum": ["EUR", "USD", "GBP", "CHF"] },
+          "buyerType": { "type": "string", "enum": ["business", "individual"] },
+          "operationType": { "type": "string", "enum": ["services", "goods", "mixed"] },
           "seller": { "type": "object" },
           "buyer": { "type": "object" },
-          "items": { "type": "array" }
+          "items": { "type": "array" },
+          "lang": { "type": "string", "enum": ["fr", "en"] }
         },
         "required": ["number", "date", "seller", "buyer", "items"]
       }

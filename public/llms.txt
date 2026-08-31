@@ -22,7 +22,7 @@
 
 ## AI Agent WebMCP Tools (`window.mcp.callTool()`)
 - `calculate_invoice_totals`: Calculates subtotal HT, VAT totals, and total TTC from invoice line items with dynamic currency.
-- `validate_invoice_data`: Validates mandatory fields (invoice number, date, seller/buyer names, SIRET, VAT numbers, line items) against EN 16931 and CIUS-FR requirements.
+- `validate_invoice_data`: Validates mandatory fields (invoice number, date, seller/buyer names, SIRET or foreign Tax ID for B2B, VAT numbers, line items) against EN 16931 and CIUS-FR requirements.
 - `generate_facturx_xml`: Generates raw Factur-X / EN 16931 XML string (UN/CEFACT CrossIndustryInvoice D16B) with bank details and payment terms.
 - `generate_facturx_invoice`: Generates and triggers browser download of the complete Factur-X PDF/A-3 hybrid file.
 
