@@ -1,4 +1,4 @@
-import type { Invoice } from '../types.ts';
+import type { Invoice, Party, BuyerType, OperationType } from '../types.ts';
 
 type GenerateFacturXFn = (invoice: Invoice, lang?: 'en' | 'fr') => Promise<void>;
 type GenerateFacturXXmlFn = (invoice: Invoice) => string;
@@ -58,11 +58,34 @@ export const WEBMCP_TOOLS: WebMcpTool[] = [
       properties: {
         number: { type: 'string' },
         date: { type: 'string' },
-        sellerName: { type: 'string' },
-        buyerName: { type: 'string' },
-        itemCount: { type: 'number' }
+        seller: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            siret: { type: 'string' },
+            vatNumber: { type: 'string' },
+            iban: { type: 'string' },
+            bic: { type: 'string' },
+            bankName: { type: 'string' }
+          },
+          required: ['name']
+        },
+        buyer: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            siret: { type: 'string' },
+            vatNumber: { type: 'string' },
+            taxId: { type: 'string' }
+          },
+          required: ['name']
+        },
+        buyerType: { type: 'string', enum: ['business', 'individual'] },
+        currency: { type: 'string', enum: ['EUR', 'USD', 'GBP', 'CHF'] },
+        operationType: { type: 'string', enum: ['services', 'goods', 'mixed'] },
+        items: { type: 'array' }
       },
-      required: ['number', 'date', 'sellerName', 'buyerName']
+      required: ['number', 'date', 'seller', 'buyer', 'items']
     }
   },
   {
@@ -82,10 +105,18 @@ export const WEBMCP_TOOLS: WebMcpTool[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        invoice: { type: 'object' },
+        number: { type: 'string' },
+        date: { type: 'string' },
+        dueDate: { type: 'string' },
+        currency: { type: 'string', enum: ['EUR', 'USD', 'GBP', 'CHF'] },
+        buyerType: { type: 'string', enum: ['business', 'individual'] },
+        operationType: { type: 'string', enum: ['services', 'goods', 'mixed'] },
+        seller: { type: 'object' },
+        buyer: { type: 'object' },
+        items: { type: 'array' },
         lang: { type: 'string', enum: ['fr', 'en'] }
       },
-      required: ['invoice']
+      required: ['number', 'date', 'seller', 'buyer', 'items']
     }
   }
 ];
@@ -134,14 +165,16 @@ export class WebMcpServer {
 
       case 'validate_invoice_data': {
         const errors: string[] = [];
+        const seller = (args.seller || {}) as Record<string, unknown>;
+        const buyer = (args.buyer || {}) as Record<string, unknown>;
         if (!args.number) errors.push('Invoice number is missing.');
         if (!args.date) errors.push('Invoice issue date is missing.');
-        if (!args.sellerName) errors.push('Seller company name is required.');
-        if (!args.buyerName) errors.push('Buyer company/client name is required.');
-        if (args.buyerType === 'business' && args.buyerCountry === 'FR' && !args.buyerSiret) {
-          errors.push('Buyer SIREN/SIRET is required for French B2B invoices.');
+        if (!seller.name) errors.push('Seller company name is required.');
+        if (!buyer.name) errors.push('Buyer company/client name is required.');
+        if (args.buyerType === 'business' && !buyer.siret) {
+          errors.push('Buyer SIREN/SIRET is required for B2B invoices.');
         }
-        if (typeof args.itemCount === 'number' && args.itemCount <= 0) {
+        if (Array.isArray(args.items) && args.items.length === 0) {
           errors.push('At least one line item is required.');
         }
         return {
@@ -159,7 +192,29 @@ export class WebMcpServer {
       }
 
       case 'generate_facturx_invoice': {
-        const invoice = args.invoice as Invoice;
+        let invoice: Invoice;
+        if (args.invoice) {
+          invoice = args.invoice as Invoice;
+        } else {
+          invoice = {
+            number: args.number as string,
+            date: args.date as string,
+            dueDate: (args.dueDate as string) || (args.date as string),
+            currency: (args.currency as string) || 'EUR',
+            buyerType: (args.buyerType as BuyerType) || 'business',
+            operationType: (args.operationType as OperationType) || 'services',
+            seller: args.seller as Party,
+            buyer: args.buyer as Party,
+            items: ((args.items as Array<Record<string, unknown>>) || []).map((item, i) => ({
+              id: String(i + 1),
+              description: String(item.description || ''),
+              quantity: Number(item.quantity) || 0,
+              unitPrice: Number(item.unitPrice) || 0,
+              vatRate: Number(item.vatRate) || 0,
+              unitCode: item.unitCode as string | undefined
+            }))
+          };
+        }
         const lang = (args.lang || 'fr') as 'fr' | 'en';
         const generateFacturX = await getGenerateFacturX();
         await generateFacturX(invoice, lang);
@@ -202,6 +257,12 @@ export class WebMcpServer {
           error: { code: -32603, message }
         }, { targetOrigin: event.origin === 'null' ? '*' : event.origin });
       }
+    } else {
+      event.source?.postMessage({
+        jsonrpc: '2.0',
+        id,
+        error: { code: -32601, message: `Method not found: ${method}` }
+      }, { targetOrigin: event.origin === 'null' ? '*' : event.origin });
     }
   }
 }

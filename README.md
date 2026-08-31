@@ -85,7 +85,7 @@ Les fichiers générés par e-nvoice peuvent être transmis via :
 | Outil | Description | Paramètres |
 | :--- | :--- | :--- |
 | `calculate_invoice_totals` | Calcule HT, TVA et TTC à partir des lignes | `items: Array<{quantity, unitPrice, vatRate}>` |
-| `validate_invoice_data` | Vérifie les champs obligatoires EN 16931 | `number, date, sellerName, buyerName, itemCount` |
+| `validate_invoice_data` | Vérifie les champs obligatoires EN 16931 | `number, date, seller: {name, siret}, buyer: {name, siret}, buyerType, items` |
 | `generate_facturx_xml` | Génère le XML UN/CEFACT brut | `invoice: Invoice` |
 | `generate_facturx_invoice` | Génère et télécharge le PDF Factur-X | `invoice: Invoice, lang: 'fr'/'en'` |
 

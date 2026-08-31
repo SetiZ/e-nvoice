@@ -739,8 +739,10 @@ console.log(await window.mcp.listTools());
 const result = await window.mcp.callTool('validate_invoice_data', {
   number: 'TEST-001',
   date: '2026-08-11',
-  sellerName: 'Test',
-  buyerName: 'Client'
+  seller: { name: 'Test SARL', country: 'FR' },
+  buyer: { name: 'Client SA', country: 'FR' },
+  buyerType: 'business',
+  items: [{ quantity: 1, unitPrice: 1000, vatRate: 20 }]
 });
 console.log(result);`}
                         </pre>

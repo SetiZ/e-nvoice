@@ -22,7 +22,8 @@
               },
               "required": ["quantity", "unitPrice", "vatRate"]
             }
-          }
+          },
+          "currency": { "type": "string", "enum": ["EUR", "USD", "GBP", "CHF"] }
         },
         "required": ["items"]
       }
