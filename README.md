@@ -15,10 +15,13 @@ Prêt pour la **réforme française 2026 de la facturation électronique B2B**, 
 
 ## ✨ Fonctionnalités Clés
 
-- 📄 **Conformité Factur-X / EN 16931** : Génère un document PDF/A-3 embarquant automatiquement le schéma XML obligatoire (`factur-x.xml`).
+- 📄 **Conformité Factur-X / EN 16931** : Génère un document PDF/A-3 embarquant automatiquement le schéma XML obligatoire (`factur-x.xml` conforme UN/CEFACT CII).
+- 👤 **Support Particuliers (B2C) & Entreprises (B2B)** : Basculez en 1 clic entre facturation B2B et facturation B2C (omission automatique des SIRET/TVA non applicables aux particuliers).
+- 🌍 **Factures Internationales & Multi-Devises** : Prise en charge des devises EUR (€), USD ($), GBP (£), CHF et des identifiants fiscaux étrangers pour vos clients hors de France.
+- 🏦 **Coordonnées Bancaires & Mentions Légales** : Intègre les champs IBAN/BIC dans le XML et le PDF, ainsi que les mentions obligatoires françaises (pénalités de retard, indemnité forfaitaire de 40 € pour frais de recouvrement, escompte, option TVA sur les débits, motifs d'exonération de TVA).
 - 🔒 **Confidentialité Totale (100% Côté Client)** : La création du PDF et du XML s'effectue localement en JavaScript. Zéro serveur, zéro traqueur.
 - ⚡ **Support WebMCP (Model Context Protocol)** : Intègre un serveur MCP natif au navigateur permettant aux agents IA (Claude, ChatGPT, Chrome AI) de pré-remplir, valider ou générer des factures via `window.mcp` et `postMessage`.
-- 🌍 **Multilingue (FR / EN)** : Interface et factures générables en Français (par défaut) et en Anglais.
+- 🌐 **Multilingue (FR / EN)** : Interface et factures générables en Français (par défaut) et en Anglais.
 - 🔍 **Optimisé SEO / AEO / GEO** : Métadonnées structurées JSON-LD (`SoftwareApplication` & `FAQPage`), manifestes `llms.txt` et `/.well-known/mcp.json` pour le référencement par les moteurs de recherche génératifs (Perplexity, SearchGPT, Gemini).
 
 ---

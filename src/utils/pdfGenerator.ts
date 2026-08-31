@@ -5,6 +5,9 @@ import { translations, type Language } from '../i18n.ts';
 
 export async function generateFacturX(invoice: Invoice, lang: Language = 'en') {
   const t = translations[lang];
+  const currency = invoice.currency || 'EUR';
+  const currencySymbol = currency === 'EUR' ? 'EUR' : currency;
+
   const calculateSubtotal = () => invoice.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
   const calculateVat = () => invoice.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice * (item.vatRate / 100)), 0);
   const calculateTotal = () => calculateSubtotal() + calculateVat();
@@ -45,18 +48,20 @@ export async function generateFacturX(invoice: Invoice, lang: Language = 'en') {
   const sellerLines = [
     invoice.seller.name || t.yourCompanyPlaceholder,
     invoice.seller.address,
-    `${invoice.seller.zip} ${invoice.seller.city} ${invoice.seller.country}`,
+    `${invoice.seller.zip} ${invoice.seller.city} ${invoice.seller.country || 'FR'}`,
     invoice.seller.siret ? `${t.siret}: ${invoice.seller.siret}` : '',
     invoice.seller.vatNumber ? `${t.vatNumber}: ${invoice.seller.vatNumber}` : ''
   ].filter(Boolean);
 
   // Buyer details
+  const isIndividual = invoice.buyerType === 'individual';
   const buyerLines = [
     invoice.buyer.name || t.clientNamePlaceholder,
     invoice.buyer.address,
-    `${invoice.buyer.zip} ${invoice.buyer.city} ${invoice.buyer.country}`,
-    invoice.buyer.siret ? `${t.siret}: ${invoice.buyer.siret}` : '',
-    invoice.buyer.vatNumber ? `${t.vatNumber}: ${invoice.buyer.vatNumber}` : ''
+    `${invoice.buyer.zip} ${invoice.buyer.city} ${invoice.buyer.country || 'FR'}`,
+    !isIndividual && invoice.buyer.siret ? `${t.siret}: ${invoice.buyer.siret}` : '',
+    !isIndividual && invoice.buyer.vatNumber ? `${t.vatNumber}: ${invoice.buyer.vatNumber}` : '',
+    !isIndividual && !invoice.buyer.vatNumber && invoice.buyer.taxId ? `${t.taxId}: ${invoice.buyer.taxId}` : ''
   ].filter(Boolean);
 
   const maxLines = Math.max(sellerLines.length, buyerLines.length);
@@ -65,7 +70,7 @@ export async function generateFacturX(invoice: Invoice, lang: Language = 'en') {
     if (buyerLines[i]) doc.text(buyerLines[i], 120, yPos + (i * 5));
   }
 
-  yPos += (maxLines * 5) + 20;
+  yPos += (maxLines * 5) + 15;
 
   // Table Header
   doc.setFillColor(240, 240, 240);
@@ -91,30 +96,80 @@ export async function generateFacturX(invoice: Invoice, lang: Language = 'en') {
     yPos += 8;
   });
 
-  yPos += 10;
+  yPos += 5;
   doc.setDrawColor(200, 200, 200);
   doc.line(100, yPos, 190, yPos);
-  yPos += 8;
+  yPos += 7;
 
   // Totals
   doc.text(`${t.subtotalExclVat}:`, 150, yPos, { align: 'right' });
-  doc.text(`${calculateSubtotal().toFixed(2)} EUR`, 185, yPos, { align: 'right' });
+  doc.text(`${calculateSubtotal().toFixed(2)} ${currencySymbol}`, 185, yPos, { align: 'right' });
   yPos += 6;
   
   doc.text(`${t.vatAmount}:`, 150, yPos, { align: 'right' });
-  doc.text(`${calculateVat().toFixed(2)} EUR`, 185, yPos, { align: 'right' });
+  doc.text(`${calculateVat().toFixed(2)} ${currencySymbol}`, 185, yPos, { align: 'right' });
   yPos += 8;
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);
   doc.text(`${t.totalAmountDue}:`, 150, yPos, { align: 'right' });
-  doc.text(`${calculateTotal().toFixed(2)} EUR`, 185, yPos, { align: 'right' });
+  doc.text(`${calculateTotal().toFixed(2)} ${currencySymbol}`, 185, yPos, { align: 'right' });
 
-  // Add Factur-X note
-  doc.setFontSize(9);
+  yPos += 16;
+
+  // Bank & Payment Details
+  if (invoice.seller.iban || invoice.seller.bic || invoice.seller.bankName) {
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text(t.bankDetails, margin, yPos);
+    yPos += 5;
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    if (invoice.seller.bankName) {
+      doc.text(`${t.bankName}: ${invoice.seller.bankName}`, margin, yPos);
+      yPos += 4.5;
+    }
+    if (invoice.seller.iban) {
+      doc.text(`${t.iban}: ${invoice.seller.iban}`, margin, yPos);
+      yPos += 4.5;
+    }
+    if (invoice.seller.bic) {
+      doc.text(`${t.bic}: ${invoice.seller.bic}`, margin, yPos);
+      yPos += 4.5;
+    }
+    yPos += 4;
+  }
+
+  // Legal Mentions & Conditions
+  doc.setFontSize(8);
+  doc.setTextColor(90, 90, 90);
+  doc.setFont('helvetica', 'normal');
+
+  const legalNotes: string[] = [];
+  if (invoice.paymentTermsText) legalNotes.push(`${t.paymentTerms}: ${invoice.paymentTermsText}`);
+  if (invoice.buyerType === 'business') {
+    if (invoice.latePenaltiesText) legalNotes.push(`${t.latePenalties}: ${invoice.latePenaltiesText}`);
+    if (invoice.recoveryIndemnityText) legalNotes.push(invoice.recoveryIndemnityText);
+  }
+  if (invoice.earlyDiscountText) legalNotes.push(invoice.earlyDiscountText);
+  if (invoice.vatOnDebits) legalNotes.push(t.vatOnDebits);
+  if (invoice.vatExemptionReason) legalNotes.push(invoice.vatExemptionReason);
+
+  const startLegalY = Math.max(yPos + 4, 255);
+  let currentLegalY = startLegalY;
+  legalNotes.forEach(note => {
+    if (currentLegalY < 282) {
+      const splitLines = doc.splitTextToSize(note, 170);
+      doc.text(splitLines, margin, currentLegalY);
+      currentLegalY += (splitLines.length * 3.5);
+    }
+  });
+
+  // Factur-X standard note
+  doc.setFontSize(8.5);
   doc.setFont('helvetica', 'italic');
-  doc.setTextColor(50, 150, 100);
-  doc.text(t.facturxNote, margin, 280);
+  doc.setTextColor(40, 140, 90);
+  doc.text(t.facturxNote, margin, 287);
 
   // 2. Generate XML
   const xmlString = generateFacturXXml(invoice);

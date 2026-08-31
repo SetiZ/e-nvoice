@@ -1,10 +1,13 @@
 # e-nvoice - Factur-X / EN 16931 Invoice Generator
 
-> e-nvoice is a free, privacy-first, client-side web application for generating Factur-X / EN 16931 compliant electronic invoices (hybrid PDF/A-3 + UN/CEFACT XML) for French 2026 B2B/B2G regulations.
+> e-nvoice is a free, privacy-first, client-side web application for generating Factur-X / EN 16931 compliant electronic invoices (hybrid PDF/A-3 + UN/CEFACT XML) for French 2026/2027 B2B/B2G regulations, B2C (particuliers), and international cross-border transactions.
 
 ## Core Capabilities & Key Facts
 - **Factur-X Standard**: Generates compliant hybrid PDF/A-3 documents embedded with `factur-x.xml` (UN/CEFACT CrossIndustryInvoice v100).
-- **French 2026 Mandate Ready**: Fully satisfies the mandatory electronic invoicing requirements for France (EN 16931 & CIUS profiles).
+- **French 2026/2027 Mandate & CIUS-FR Ready**: Satisfies mandatory electronic invoicing (B2B) and e-reporting requirements (B2C & International).
+- **B2C & Particuliers Support**: Easily toggle between business and individual clients (automatic handling of mandatory legal fields).
+- **Foreign & International Invoices**: Supports multi-currency (EUR, USD, GBP, CHF), foreign Tax IDs, and VAT exemption legal mentions (art. 262 ter, art. 262-I, reverse charge).
+- **Bank Details & Payment Compliance**: Embeds IBAN/BIC in XML and PDF alongside statutory French B2B terms (due dates, late penalties, 40 € recovery fee, discount policies, VAT on debits).
 - **100% Client-Side Privacy**: Zero data sent to external servers. All PDF and XML rendering occurs locally inside the user's browser.
 - **WebMCP Integration (Beta)**: Exposes in-browser Model Context Protocol endpoints over `window.mcp` and `postMessage` for AI scripts and extensions.
 - **Chorus Pro Compatible**: Generated Factur-X PDFs can be uploaded directly to the French government Chorus Pro portal (`portail.chorus-pro.gouv.fr`).
@@ -12,14 +15,15 @@
 ## Summary Technical Specifications
 - Application URL: https://setiz.github.io/e-nvoice/
 - Supported Profiles: Factur-X MINIMUM, BASIC, BASIC WL, EN 16931
+- Supported Currencies: EUR, USD, GBP, CHF
 - Underlying Formats: PDF/A-3 (ISO 19005-3), UN/CEFACT CII D16B XML
 - Cost: 100% Free & Open Source (MIT License)
 - Server Dependency: None (Runs completely in browser)
 
 ## AI Agent WebMCP Tools (`window.mcp.callTool()`)
-- `calculate_invoice_totals`: Calculates subtotal HT, VAT totals, and total TTC from invoice line items.
-- `validate_invoice_data`: Validates mandatory fields (invoice number, date, seller/buyer names, SIRET, VAT numbers, line items) against EN 16931 requirements.
-- `generate_facturx_xml`: Generates raw Factur-X / EN 16931 XML string (UN/CEFACT CrossIndustryInvoice D16B).
+- `calculate_invoice_totals`: Calculates subtotal HT, VAT totals, and total TTC from invoice line items with dynamic currency.
+- `validate_invoice_data`: Validates mandatory fields (invoice number, date, seller/buyer names, SIRET, VAT numbers, line items) against EN 16931 and CIUS-FR requirements.
+- `generate_facturx_xml`: Generates raw Factur-X / EN 16931 XML string (UN/CEFACT CrossIndustryInvoice D16B) with bank details and payment terms.
 - `generate_facturx_invoice`: Generates and triggers browser download of the complete Factur-X PDF/A-3 hybrid file.
 
 ## Key Links & Resources

@@ -3,7 +3,7 @@
   "info": {
     "title": "e-nvoice Factur-X Generator & Validator API (Beta)",
     "description": "Client-side WebMCP API for generating and validating Factur-X / EN 16931 electronic invoices. Note: This is a client-side only API accessible via window.mcp in the browser. External HTTP calls will not work.",
-    "version": "1.0.0-beta",
+    "version": "1.1.0",
     "contact": {
       "name": "e-nvoice",
       "url": "https://github.com/SetiZ/e-nvoice"
@@ -58,6 +58,15 @@
           "number": { "type": "string", "description": "Invoice number" },
           "date": { "type": "string", "format": "date", "description": "Invoice issue date" },
           "dueDate": { "type": "string", "format": "date", "description": "Payment due date" },
+          "currency": { "type": "string", "enum": ["EUR", "USD", "GBP", "CHF"], "default": "EUR", "description": "Invoice currency code" },
+          "buyerType": { "type": "string", "enum": ["business", "individual"], "default": "business", "description": "Client type (B2B vs B2C)" },
+          "operationType": { "type": "string", "enum": ["services", "goods", "mixed"], "default": "services", "description": "Operation category" },
+          "vatOnDebits": { "type": "boolean", "description": "VAT on debits option" },
+          "paymentTermsText": { "type": "string", "description": "Payment terms" },
+          "latePenaltiesText": { "type": "string", "description": "Late payment penalties mention" },
+          "recoveryIndemnityText": { "type": "string", "description": "40 EUR statutory recovery fee" },
+          "earlyDiscountText": { "type": "string", "description": "Early payment discount policy" },
+          "vatExemptionReason": { "type": "string", "description": "Legal VAT exemption mention for 0% VAT" },
           "seller": { "$ref": "#/components/schemas/Party" },
           "buyer": { "$ref": "#/components/schemas/Party" },
           "items": {
@@ -76,7 +85,11 @@
           "zip": { "type": "string" },
           "country": { "type": "string", "default": "FR" },
           "siret": { "type": "string" },
-          "vatNumber": { "type": "string" }
+          "vatNumber": { "type": "string" },
+          "taxId": { "type": "string", "description": "Foreign Tax ID for international buyers" },
+          "iban": { "type": "string", "description": "Bank account IBAN" },
+          "bic": { "type": "string", "description": "Bank BIC / SWIFT code" },
+          "bankName": { "type": "string", "description": "Bank institution name" }
         },
         "required": ["name"]
       },
@@ -86,7 +99,8 @@
           "description": { "type": "string" },
           "quantity": { "type": "number", "minimum": 0 },
           "unitPrice": { "type": "number", "minimum": 0 },
-          "vatRate": { "type": "number", "minimum": 0, "maximum": 100 }
+          "vatRate": { "type": "number", "minimum": 0, "maximum": 100 },
+          "unitCode": { "type": "string", "enum": ["C62", "HUR", "DAY", "E48"], "default": "C62" }
         },
         "required": ["description", "quantity", "unitPrice", "vatRate"]
       }

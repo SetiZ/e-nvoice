@@ -4,22 +4,28 @@
 
 ---
 
-## 1. Regulatory Context (French 2026 Electronic Invoicing Mandate)
+## 1. Regulatory Context (French 2026/2027 Electronic Invoicing & E-Reporting Mandate)
 
-Beginning September 2026, all businesses established in France subject to VAT must be capable of receiving electronic invoices, and medium/large enterprises (followed by SMEs and micro-enterprises) must issue electronic invoices for inter-company B2B transactions.
+Beginning September 2026, all businesses established in France subject to VAT must be capable of receiving electronic invoices. Issuance becomes mandatory for large/ETI companies in September 2026, and for all SMEs and micro-enterprises in September 2027.
 
-### Key Mandate Requirements
-1. **Format Standards**: Acceptable formats include Factur-X (hybrid PDF/A-3 + XML), UBL 2.1, and UN/CEFACT CII.
-2. **Factur-X Standard**: Factur-X is a joint Franco-German standard (developed by FNFE-MPE and FERD) that embeds a structured XML file (`factur-x.xml`) into a PDF/A-3 visual document.
-3. **Data Integrity**: Invoices must contain mandatory tax and legal fields including SIRET numbers, intra-community VAT numbers, line item tax rates, payment due dates, and totals.
-4. **Chorus Pro & PDP Platform Submission**: Factur-X invoices can be submitted to Chorus Pro (`portail.chorus-pro.gouv.fr`) or Registered Dematerialization Platforms (PDP).
+### Key Mandate & Compliance Requirements
+1. **Domestic B2B E-Invoicing**: Transmitted via Partner Dematerialization Platforms (PDP / Plateformes Agréées).
+2. **B2C & International E-Reporting**: Transactions with individuals (B2C) and foreign clients (Intra-EU & Exports) are submitted via e-reporting while generating compliant Factur-X / PDF invoices.
+3. **Format Standards**: Acceptable formats include Factur-X (hybrid PDF/A-3 + UN/CEFACT CII XML), UBL 2.1, and CII.
+4. **Mandatory National Fields (CIUS-FR)**:
+   - Seller & Buyer SIREN/SIRET numbers (B2B).
+   - Operation category: Prestations de services, Livraisons de biens, or Mixte.
+   - Option for payment of VAT on debits (where applicable).
+   - Statutory B2B payment terms: Due dates, late payment interest rate (3x legal rate), and mandatory 40 € lump-sum recovery fee (Art. D. 441-5 Code de commerce).
+   - Bank details (IBAN / BIC) embedded in structured XML (`ram:PayeePartyCreditorFinancialAccount`).
+5. **Chorus Pro & PDP Platform Submission**: Factur-X invoices can be submitted to Chorus Pro (`portail.chorus-pro.gouv.fr`) or Registered Dematerialization Platforms (PDP).
 
 ---
 
 ## 2. Technical Architecture & Security Model
 
-- **Frontend Stack**: Built with React 19, TypeScript, Vite, and Tailwind/CSS utilities.
-- **Client-Side Rendering Engine**: PDF rendering via `pdf-lib` and `jspdf`, XML generation via custom browser-native TypeScript string builder (`facturx.ts`).
+- **Frontend Stack**: Built with React 19, TypeScript, Vite, and CSS utilities.
+- **Client-Side Rendering Engine**: PDF rendering via `pdf-lib` and `jspdf`, XML generation via browser-native TypeScript string builder (`facturx.ts`).
 - **Zero Server Footprint**: No backend database, microservice, or analytics tracking collects invoice data. All inputs remain strictly in browser volatile memory (`HTML5 State`).
 - **WebMCP (Model Context Protocol)**: Implements an in-browser WebMCP server exposing tools via `window.mcp` and `window.postMessage`, allowing AI extensions (Claude, Gemini, ChatGPT extensions, Chrome AI) to inspect, generate, and validate invoices programmatically without backend API keys.
 

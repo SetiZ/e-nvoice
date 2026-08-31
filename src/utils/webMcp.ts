@@ -125,10 +125,11 @@ export class WebMcpServer {
     switch (name) {
       case 'calculate_invoice_totals': {
         const items = (args.items || []) as Array<{ quantity: number; unitPrice: number; vatRate: number }>;
+        const currency = (args.currency as string) || 'EUR';
         const subtotal = items.reduce((sum, i) => sum + (i.quantity * i.unitPrice), 0);
         const vat = items.reduce((sum, i) => sum + (i.quantity * i.unitPrice * (i.vatRate / 100)), 0);
         const total = subtotal + vat;
-        return { subtotal, vat, total, currency: 'EUR' };
+        return { subtotal, vat, total, currency };
       }
 
       case 'validate_invoice_data': {
@@ -137,13 +138,16 @@ export class WebMcpServer {
         if (!args.date) errors.push('Invoice issue date is missing.');
         if (!args.sellerName) errors.push('Seller company name is required.');
         if (!args.buyerName) errors.push('Buyer company/client name is required.');
+        if (args.buyerType === 'business' && args.buyerCountry === 'FR' && !args.buyerSiret) {
+          errors.push('Buyer SIREN/SIRET is required for French B2B invoices.');
+        }
         if (typeof args.itemCount === 'number' && args.itemCount <= 0) {
           errors.push('At least one line item is required.');
         }
         return {
           valid: errors.length === 0,
           errors,
-          compliantStandard: 'EN 16931 / Factur-X'
+          compliantStandard: 'EN 16931 / Factur-X / CIUS-FR'
         };
       }
 

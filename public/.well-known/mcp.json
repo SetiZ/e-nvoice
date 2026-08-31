@@ -1,7 +1,7 @@
 {
   "name": "e-nvoice WebMCP Server",
   "description": "Browser-native WebMCP server for creating and validating Factur-X / EN 16931 invoices",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "protocolVersion": "2024-11-05",
   "transport": "window.postMessage",
   "tools": [
@@ -39,17 +39,27 @@
             "type": "object",
             "properties": {
               "name": { "type": "string" },
-              "siret": { "type": "string" }
+              "siret": { "type": "string" },
+              "vatNumber": { "type": "string" },
+              "iban": { "type": "string" },
+              "bic": { "type": "string" },
+              "bankName": { "type": "string" }
             },
             "required": ["name"]
           },
           "buyer": {
             "type": "object",
             "properties": {
-              "name": { "type": "string" }
+              "name": { "type": "string" },
+              "siret": { "type": "string" },
+              "vatNumber": { "type": "string" },
+              "taxId": { "type": "string" }
             },
             "required": ["name"]
           },
+          "buyerType": { "type": "string", "enum": ["business", "individual"] },
+          "currency": { "type": "string", "enum": ["EUR", "USD", "GBP", "CHF"] },
+          "operationType": { "type": "string", "enum": ["services", "goods", "mixed"] },
           "items": {
             "type": "array"
           }
@@ -66,6 +76,9 @@
           "number": { "type": "string" },
           "date": { "type": "string" },
           "dueDate": { "type": "string" },
+          "currency": { "type": "string" },
+          "buyerType": { "type": "string" },
+          "operationType": { "type": "string" },
           "seller": { "type": "object" },
           "buyer": { "type": "object" },
           "items": { "type": "array" }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Plus, Trash2, Download, CheckCircle, Globe, Cpu, HelpCircle } from 'lucide-react';
-import type { Invoice, Party, LineItem } from './types.ts';
+import { Plus, Trash2, Download, CheckCircle, Globe, Cpu, HelpCircle, Building2, User, Landmark, ShieldCheck } from 'lucide-react';
+import type { Invoice, Party, LineItem, BuyerType, OperationType } from './types.ts';
 import { translations, type Language } from './i18n.ts';
 import { WEBMCP_TOOLS } from './utils/webMcp.ts';
 import './index.css';
@@ -18,7 +18,11 @@ const initialParty: Party = {
   zip: '',
   country: 'FR',
   siret: '',
-  vatNumber: ''
+  vatNumber: '',
+  taxId: '',
+  iban: '',
+  bic: '',
+  bankName: ''
 };
 
 function App() {
@@ -26,10 +30,28 @@ function App() {
     number: `INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
     date: new Date().toISOString().split('T')[0],
     dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    seller: { ...initialParty, name: 'Ma Société', siret: '12345678900012', vatNumber: 'FR12123456789' },
+    currency: 'EUR',
+    buyerType: 'business',
+    operationType: 'services',
+    vatOnDebits: false,
+    paymentTermsText: 'Paiement à 30 jours',
+    latePenaltiesText: '3 fois le taux d\'intérêt légal',
+    recoveryIndemnityText: 'Indemnité forfaitaire pour frais de recouvrement en cas de retard : 40 € (Art. D. 441-5 Code de commerce)',
+    earlyDiscountText: 'Escompte pour paiement anticipé : néant',
+    vatExemptionReason: '',
+    seller: {
+      ...initialParty,
+      name: 'Ma Société',
+      siret: '12345678900012',
+      vatNumber: 'FR12123456789',
+      iban: 'FR7630006000011234567890189',
+      bic: 'BNPAFRPPXXX',
+      bankName: 'BNP Paribas',
+      country: 'FR'
+    },
     buyer: { ...initialParty },
     items: [
-      { id: crypto.randomUUID(), description: 'Services de conseil', quantity: 1, unitPrice: 1000, vatRate: 20 }
+      { id: crypto.randomUUID(), description: 'Services de conseil', quantity: 1, unitPrice: 1000, vatRate: 20, unitCode: 'C62' }
     ]
   }));
 
@@ -41,6 +63,18 @@ function App() {
   const [lang, setLang] = useState<Language>('fr');
   const t = translations[lang];
 
+  const getCurrencySymbol = (curr: string) => {
+    switch (curr) {
+      case 'EUR': return '€';
+      case 'USD': return '$';
+      case 'GBP': return '£';
+      case 'CHF': return 'CHF';
+      default: return curr;
+    }
+  };
+
+  const currSymbol = getCurrencySymbol(invoice.currency || 'EUR');
+
   const handleSellerChange = (field: keyof Party, value: string) => {
     setInvoice(prev => ({ ...prev, seller: { ...prev.seller, [field]: value } }));
   };
@@ -49,14 +83,14 @@ function App() {
     setInvoice(prev => ({ ...prev, buyer: { ...prev.buyer, [field]: value } }));
   };
 
-  const handleInvoiceChange = (field: keyof Invoice, value: string) => {
+  const handleInvoiceChange = <K extends keyof Invoice>(field: K, value: Invoice[K]) => {
     setInvoice(prev => ({ ...prev, [field]: value }));
   };
 
   const addItem = () => {
     setInvoice(prev => ({
       ...prev,
-      items: [...prev.items, { id: crypto.randomUUID(), description: '', quantity: 1, unitPrice: 0, vatRate: 20 }]
+      items: [...prev.items, { id: crypto.randomUUID(), description: '', quantity: 1, unitPrice: 0, vatRate: 20, unitCode: 'C62' }]
     }));
   };
 
@@ -79,6 +113,8 @@ function App() {
   const calculateVat = () => invoice.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice * (item.vatRate / 100)), 0);
 
   const calculateTotal = () => calculateSubtotal() + calculateVat();
+
+  const hasZeroVat = invoice.items.some(item => item.vatRate === 0);
 
   const handleGenerate = async () => {
     setIsGenerating(true);
@@ -142,6 +178,7 @@ function App() {
           </div>
         </div>
 
+        {/* Invoice Details Card */}
         <div className="glass-card">
           <h2>{t.invoiceDetails}</h2>
           <div className="form-row">
@@ -158,8 +195,37 @@ function App() {
               <input id="invoice-due-date" type="date" value={invoice.dueDate} onChange={e => handleInvoiceChange('dueDate', e.target.value)} />
             </div>
           </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="invoice-currency">{t.currency}</label>
+              <select
+                id="invoice-currency"
+                value={invoice.currency || 'EUR'}
+                onChange={e => handleInvoiceChange('currency', e.target.value)}
+              >
+                <option value="EUR">EUR (€) - Euro</option>
+                <option value="USD">USD ($) - US Dollar</option>
+                <option value="GBP">GBP (£) - British Pound</option>
+                <option value="CHF">CHF - Swiss Franc</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="invoice-op-type">{t.operationType}</label>
+              <select
+                id="invoice-op-type"
+                value={invoice.operationType || 'services'}
+                onChange={e => handleInvoiceChange('operationType', e.target.value as OperationType)}
+              >
+                <option value="services">{t.services}</option>
+                <option value="goods">{t.goods}</option>
+                <option value="mixed">{t.mixed}</option>
+              </select>
+            </div>
+          </div>
         </div>
 
+        {/* Seller & Buyer Cards */}
         <div className="form-row">
           {/* Seller Details */}
           <div className="glass-card">
@@ -182,19 +248,63 @@ function App() {
                 <input id="seller-zip" type="text" value={invoice.seller.zip} onChange={e => handleSellerChange('zip', e.target.value)} />
               </div>
             </div>
-            <div className="form-group">
-              <label htmlFor="seller-siret">{t.siret}</label>
-              <input id="seller-siret" type="text" value={invoice.seller.siret} onChange={e => handleSellerChange('siret', e.target.value)} />
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="seller-country">{t.country}</label>
+                <input id="seller-country" type="text" value={invoice.seller.country || 'FR'} onChange={e => handleSellerChange('country', e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label htmlFor="seller-siret">{t.siret}</label>
+                <input id="seller-siret" type="text" value={invoice.seller.siret || ''} onChange={e => handleSellerChange('siret', e.target.value)} />
+              </div>
             </div>
             <div className="form-group">
               <label htmlFor="seller-vat">{t.vatNumber}</label>
-              <input id="seller-vat" type="text" value={invoice.seller.vatNumber} onChange={e => handleSellerChange('vatNumber', e.target.value)} />
+              <input id="seller-vat" type="text" value={invoice.seller.vatNumber || ''} onChange={e => handleSellerChange('vatNumber', e.target.value)} />
+            </div>
+
+            {/* Bank Details */}
+            <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
+              <h3 style={{ fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#93c5fd', marginBottom: '0.75rem' }}>
+                <Landmark size={16} /> {t.bankDetails}
+              </h3>
+              <div className="form-group">
+                <label htmlFor="seller-bank">{t.bankName}</label>
+                <input id="seller-bank" type="text" value={invoice.seller.bankName || ''} onChange={e => handleSellerChange('bankName', e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label htmlFor="seller-iban">{t.iban}</label>
+                <input id="seller-iban" type="text" value={invoice.seller.iban || ''} onChange={e => handleSellerChange('iban', e.target.value)} placeholder="FR76 3000 ..." />
+              </div>
+              <div className="form-group">
+                <label htmlFor="seller-bic">{t.bic}</label>
+                <input id="seller-bic" type="text" value={invoice.seller.bic || ''} onChange={e => handleSellerChange('bic', e.target.value)} placeholder="BNPAFRPPXXX" />
+              </div>
             </div>
           </div>
 
           {/* Buyer Details */}
           <div className="glass-card">
-            <h2>{t.buyerTitle}</h2>
+            <div className="flex-between mb-4">
+              <h2>{t.buyerTitle}</h2>
+              <div className="segmented-control" role="group" aria-label="Buyer Type">
+                <button
+                  type="button"
+                  className={invoice.buyerType === 'business' ? 'active' : ''}
+                  onClick={() => handleInvoiceChange('buyerType', 'business' as BuyerType)}
+                >
+                  <Building2 size={14} style={{ display: 'inline', marginRight: 4 }} /> {t.b2b}
+                </button>
+                <button
+                  type="button"
+                  className={invoice.buyerType === 'individual' ? 'active' : ''}
+                  onClick={() => handleInvoiceChange('buyerType', 'individual' as BuyerType)}
+                >
+                  <User size={14} style={{ display: 'inline', marginRight: 4 }} /> {t.b2c}
+                </button>
+              </div>
+            </div>
+
             <div className="form-group">
               <label htmlFor="buyer-name">{t.name}</label>
               <input id="buyer-name" type="text" value={invoice.buyer.name} onChange={e => handleBuyerChange('name', e.target.value)} />
@@ -214,13 +324,31 @@ function App() {
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="buyer-siret">{t.siret}</label>
-              <input id="buyer-siret" type="text" value={invoice.buyer.siret} onChange={e => handleBuyerChange('siret', e.target.value)} />
+              <label htmlFor="buyer-country">{t.country}</label>
+              <input id="buyer-country" type="text" value={invoice.buyer.country || 'FR'} onChange={e => handleBuyerChange('country', e.target.value)} placeholder="FR, DE, US, GB..." />
             </div>
-            <div className="form-group">
-              <label htmlFor="buyer-vat">{t.vatNumber}</label>
-              <input id="buyer-vat" type="text" value={invoice.buyer.vatNumber} onChange={e => handleBuyerChange('vatNumber', e.target.value)} />
-            </div>
+
+            {/* B2B specific fields */}
+            {invoice.buyerType === 'business' && (
+              <>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="buyer-siret">{t.siret}</label>
+                    <input id="buyer-siret" type="text" value={invoice.buyer.siret || ''} onChange={e => handleBuyerChange('siret', e.target.value)} placeholder="French 14-digit SIRET" />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="buyer-vat">{t.vatNumber}</label>
+                    <input id="buyer-vat" type="text" value={invoice.buyer.vatNumber || ''} onChange={e => handleBuyerChange('vatNumber', e.target.value)} placeholder="Intra-community VAT" />
+                  </div>
+                </div>
+                {invoice.buyer.country && invoice.buyer.country !== 'FR' && (
+                  <div className="form-group">
+                    <label htmlFor="buyer-taxid">{t.taxId}</label>
+                    <input id="buyer-taxid" type="text" value={invoice.buyer.taxId || ''} onChange={e => handleBuyerChange('taxId', e.target.value)} placeholder="Foreign Tax ID (e.g. US EIN, UK VAT)" />
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
 
@@ -235,7 +363,7 @@ function App() {
           <div className="line-item-header">
             <div>{t.description}</div>
             <div>{t.quantity}</div>
-            <div>{t.price}</div>
+            <div>{t.price} ({currSymbol})</div>
             <div>{t.vatPercent}</div>
             <div style={{ width: 36 }}></div>
           </div>
@@ -243,8 +371,8 @@ function App() {
           <div className="line-items-container" role="list" aria-label="Invoice line items">
             {invoice.items.map(item => (
               <div key={item.id} className="line-item" role="listitem">
-                <div>
-                  <label htmlFor={`item-desc-${item.id}`} className="sr-only">{t.description}</label>
+                <div className="line-item-field line-item-desc">
+                  <label htmlFor={`item-desc-${item.id}`} className="field-label-mobile">{t.description}</label>
                   <input
                     id={`item-desc-${item.id}`}
                     type="text"
@@ -253,8 +381,8 @@ function App() {
                     onChange={e => updateItem(item.id, 'description', e.target.value)}
                   />
                 </div>
-                <div>
-                  <label htmlFor={`item-qty-${item.id}`} className="sr-only">{t.quantity}</label>
+                <div className="line-item-field line-item-qty">
+                  <label htmlFor={`item-qty-${item.id}`} className="field-label-mobile">{t.quantity}</label>
                   <input
                     id={`item-qty-${item.id}`}
                     type="number"
@@ -263,8 +391,8 @@ function App() {
                     onChange={e => updateItem(item.id, 'quantity', parseFloat(e.target.value) || 0)}
                   />
                 </div>
-                <div>
-                  <label htmlFor={`item-price-${item.id}`} className="sr-only">{t.price}</label>
+                <div className="line-item-field line-item-price">
+                  <label htmlFor={`item-price-${item.id}`} className="field-label-mobile">{t.price} ({currSymbol})</label>
                   <input
                     id={`item-price-${item.id}`}
                     type="number"
@@ -274,8 +402,8 @@ function App() {
                     onChange={e => updateItem(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
                   />
                 </div>
-                <div>
-                  <label htmlFor={`item-vat-${item.id}`} className="sr-only">{t.vatPercent}</label>
+                <div className="line-item-field line-item-vat">
+                  <label htmlFor={`item-vat-${item.id}`} className="field-label-mobile">{t.vatPercent}</label>
                   <select
                     id={`item-vat-${item.id}`}
                     value={item.vatRate}
@@ -288,12 +416,118 @@ function App() {
                     <option value="0">0%</option>
                   </select>
                 </div>
-                <button className="btn-icon" onClick={() => removeItem(item.id)} aria-label={t.deleteItem}>
-                  <Trash2 size={16} className="text-danger" />
-                </button>
+                <div className="line-item-actions">
+                  <button className="btn-icon btn-delete-item" onClick={() => removeItem(item.id)} aria-label={t.deleteItem}>
+                    <Trash2 size={16} className="text-danger" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Legal Mentions & Payment Conditions Card */}
+        <div className="glass-card">
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <ShieldCheck size={20} className="text-primary" /> {t.legalMentions}
+          </h2>
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="payment-terms">{t.paymentTerms}</label>
+              <input
+                id="payment-terms"
+                type="text"
+                value={invoice.paymentTermsText || ''}
+                onChange={e => handleInvoiceChange('paymentTermsText', e.target.value)}
+                placeholder={t.paymentTermsPlaceholder}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="early-discount">{t.earlyDiscount}</label>
+              <input
+                id="early-discount"
+                type="text"
+                value={invoice.earlyDiscountText || ''}
+                onChange={e => handleInvoiceChange('earlyDiscountText', e.target.value)}
+              />
+            </div>
+          </div>
+
+          {invoice.buyerType === 'business' && (
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="late-penalties">{t.latePenalties}</label>
+                <input
+                  id="late-penalties"
+                  type="text"
+                  value={invoice.latePenaltiesText || ''}
+                  onChange={e => handleInvoiceChange('latePenaltiesText', e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="recovery-indemnity">{t.recoveryIndemnity}</label>
+                <input
+                  id="recovery-indemnity"
+                  type="text"
+                  value={invoice.recoveryIndemnityText || ''}
+                  onChange={e => handleInvoiceChange('recoveryIndemnityText', e.target.value)}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* VAT on debits & Exemption mentions */}
+          <div className="form-group">
+            <div className="checkbox-group">
+              <input
+                id="vat-on-debits"
+                type="checkbox"
+                checked={!!invoice.vatOnDebits}
+                onChange={e => handleInvoiceChange('vatOnDebits', e.target.checked)}
+              />
+              <label htmlFor="vat-on-debits">{t.vatOnDebits}</label>
+            </div>
+          </div>
+
+          {(hasZeroVat || invoice.vatExemptionReason) && (
+            <div className="form-group" style={{ marginTop: '1rem', padding: '0.75rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '0.5rem', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
+              <label htmlFor="vat-exemption" style={{ color: '#93c5fd', fontWeight: 600 }}>{t.vatExemptionReason}</label>
+              <input
+                id="vat-exemption"
+                type="text"
+                value={invoice.vatExemptionReason || ''}
+                onChange={e => handleInvoiceChange('vatExemptionReason', e.target.value)}
+                placeholder={t.vatExemptionPlaceholder}
+                style={{ marginBottom: '0.5rem' }}
+              />
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
+                  onClick={() => handleInvoiceChange('vatExemptionReason', 'TVA non applicable, art. 293 B du CGI')}
+                >
+                  Franchise en base (Art. 293 B)
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
+                  onClick={() => handleInvoiceChange('vatExemptionReason', 'Autoliquidation de la TVA')}
+                >
+                  Autoliquidation (B2B Intracomm.)
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
+                  onClick={() => handleInvoiceChange('vatExemptionReason', 'Exonération de TVA, article 262-I du CGI')}
+                >
+                  Exportation hors UE (Art. 262-I)
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* WebMCP Fixed Overlay Modal */}
@@ -593,21 +827,22 @@ console.log(result);`}
               <div className="party-info">
                 <strong>{invoice.seller.name || t.yourCompanyPlaceholder}</strong><br />
                 {invoice.seller.address}<br />
-                {invoice.seller.zip} {invoice.seller.city} {invoice.seller.country}<br />
+                {invoice.seller.zip} {invoice.seller.city} {invoice.seller.country || 'FR'}<br />
                 <br />
                 {invoice.seller.siret && <div>{t.siret}: {invoice.seller.siret}</div>}
                 {invoice.seller.vatNumber && <div>{t.vatNumber}: {invoice.seller.vatNumber}</div>}
               </div>
             </div>
             <div className="party-box">
-              <h3>{t.buyer}</h3>
+              <h3>{t.buyer} ({invoice.buyerType === 'individual' ? t.b2c : t.b2b})</h3>
               <div className="party-info">
                 <strong>{invoice.buyer.name || t.clientNamePlaceholder}</strong><br />
                 {invoice.buyer.address}<br />
-                {invoice.buyer.zip} {invoice.buyer.city} {invoice.buyer.country}<br />
+                {invoice.buyer.zip} {invoice.buyer.city} {invoice.buyer.country || 'FR'}<br />
                 <br />
-                {invoice.buyer.siret && <div>{t.siret}: {invoice.buyer.siret}</div>}
-                {invoice.buyer.vatNumber && <div>{t.vatNumber}: {invoice.buyer.vatNumber}</div>}
+                {invoice.buyerType === 'business' && invoice.buyer.siret && <div>{t.siret}: {invoice.buyer.siret}</div>}
+                {invoice.buyerType === 'business' && invoice.buyer.vatNumber && <div>{t.vatNumber}: {invoice.buyer.vatNumber}</div>}
+                {invoice.buyerType === 'business' && !invoice.buyer.vatNumber && invoice.buyer.taxId && <div>{t.taxId}: {invoice.buyer.taxId}</div>}
               </div>
             </div>
           </div>
@@ -627,9 +862,9 @@ console.log(result);`}
                 <tr key={item.id}>
                   <td>{item.description || '-'}</td>
                   <td className="text-right">{item.quantity}</td>
-                  <td className="text-right">{item.unitPrice.toFixed(2)} €</td>
+                  <td className="text-right">{item.unitPrice.toFixed(2)} {currSymbol}</td>
                   <td className="text-right">{item.vatRate}%</td>
-                  <td className="text-right">{(item.quantity * item.unitPrice).toFixed(2)} €</td>
+                  <td className="text-right">{(item.quantity * item.unitPrice).toFixed(2)} {currSymbol}</td>
                 </tr>
               ))}
             </tbody>
@@ -638,16 +873,40 @@ console.log(result);`}
           <div className="invoice-totals">
             <div className="total-row">
               <span>{t.subtotalExclVat}</span>
-              <span>{calculateSubtotal().toFixed(2)} €</span>
+              <span>{calculateSubtotal().toFixed(2)} {currSymbol}</span>
             </div>
             <div className="total-row">
               <span>{t.vatAmount}</span>
-              <span>{calculateVat().toFixed(2)} €</span>
+              <span>{calculateVat().toFixed(2)} {currSymbol}</span>
             </div>
             <div className="total-row grand-total">
               <span>{t.totalAmountDue}</span>
-              <span>{calculateTotal().toFixed(2)} €</span>
+              <span>{calculateTotal().toFixed(2)} {currSymbol}</span>
             </div>
+          </div>
+
+          {/* Bank details preview */}
+          {(invoice.seller.iban || invoice.seller.bic || invoice.seller.bankName) && (
+            <div className="preview-bank-box">
+              <h4>{t.bankDetails}</h4>
+              {invoice.seller.bankName && <div><strong>{t.bankName}:</strong> {invoice.seller.bankName}</div>}
+              {invoice.seller.iban && <div><strong>{t.iban}:</strong> {invoice.seller.iban}</div>}
+              {invoice.seller.bic && <div><strong>{t.bic}:</strong> {invoice.seller.bic}</div>}
+            </div>
+          )}
+
+          {/* Legal Mentions Footer */}
+          <div className="preview-legal-footer">
+            {invoice.paymentTermsText && <p><strong>{t.paymentTerms}:</strong> {invoice.paymentTermsText}</p>}
+            {invoice.buyerType === 'business' && invoice.latePenaltiesText && (
+              <p><strong>{t.latePenalties}:</strong> {invoice.latePenaltiesText}</p>
+            )}
+            {invoice.buyerType === 'business' && invoice.recoveryIndemnityText && (
+              <p>{invoice.recoveryIndemnityText}</p>
+            )}
+            {invoice.earlyDiscountText && <p>{invoice.earlyDiscountText}</p>}
+            {invoice.vatOnDebits && <p>{t.vatOnDebits}</p>}
+            {invoice.vatExemptionReason && <p><strong>{t.vatExemptionReason}:</strong> {invoice.vatExemptionReason}</p>}
           </div>
 
         </div>
