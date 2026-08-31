@@ -107,6 +107,8 @@ Les fichiers générés par e-nvoice peuvent être transmis via :
 > ❓ **Pourquoi Chrome DevTools > Application > WebMCP ne montre pas les outils ?**
 > Chrome's WebMCP viewer affiche uniquement les serveurs MCP **enregistrés avec Chrome** (via `chrome://settings/ai`). L'API `window.mcp` d'e-nvoice est une implémentation **custom** qui n'apparaît pas dans cette section. C'est normal en développement local.
 
+> ✨ **WebMCP natif Chrome** : e-nvoice enregistre également ses outils via l'API WebMCP native de Chrome (`document.modelContext.registerTool`), ce qui leur permet d'apparaître dans l'inspecteur WebMCP et d'être découverts par les agents Chrome. Cette fonctionnalité est **automatique et progressive** : elle s'active uniquement lorsque le navigateur expose `document.modelContext` (Chrome + isolation d'origine), et bascule en silence sur l'API `window.mcp` sinon.
+
 ### 📖 Méthodes Fonctionnelles
 
 #### ✅ **1. Console Navigateur (Tous navigateurs)**

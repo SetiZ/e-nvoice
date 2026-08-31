@@ -585,8 +585,8 @@ function App() {
                     </p>
                     <p className="text-secondary" style={{ fontSize: '0.85rem', lineHeight: 1.5 }}>
                       {lang === 'fr' 
-                        ? 'L\'API WebMCP fonctionne uniquement depuis la page e-nvoice elle-même. Les plateformes IA externes (Claude.ai, Gemini, Mistral) ne peuvent pas y accéder directement pour des raisons de sécurité navigateur.'
-                        : 'The WebMCP API only works from the e-nvoice page itself. External AI platforms (Claude.ai, Gemini, Mistral) cannot access it directly due to browser security restrictions.'
+                        ? 'L\'API WebMCP fonctionne uniquement depuis la page e-nvoice elle-même. Les plateformes IA externes (Claude.ai, Gemini, Mistral) ne peuvent pas y accéder directement pour des raisons de sécurité navigateur. De plus, e-nvoice enregistre automatiquement ses outils via l\'API WebMCP native de Chrome (document.modelContext.registerTool) lorsque celle-ci est disponible (Chrome + isolation d\'origine).'
+                        : 'The WebMCP API only works from the e-nvoice page itself. External AI platforms (Claude.ai, Gemini, Mistral) cannot access it directly due to browser security restrictions. Additionally, e-nvoice auto-registers its tools via Chrome\'s native WebMCP API (document.modelContext.registerTool) when available (Chrome + origin isolation).'
                       }
                     </p>
                   </div>

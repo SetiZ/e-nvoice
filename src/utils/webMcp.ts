@@ -146,6 +146,35 @@ export class WebMcpServer {
 
     this.isInitialized = true;
     console.log('⚡ [WebMCP] Client-side MCP Server initialized. Available tools:', WEBMCP_TOOLS.map(t => t.name));
+
+    // Best-effort native WebMCP registration (progressive enhancement).
+    // No-ops when unavailable (non-Chrome, missing origin isolation / origin trial).
+    void this.registerNativeTools();
+  }
+
+  /**
+   * Registers tools via the native WebMCP Imperative API (document.modelContext.registerTool).
+   * This is a progressive enhancement on top of the custom window.mcp / JSON-RPC layer and is
+   * only active where the browser exposes document.modelContext (Chrome origin trial + origin
+   * isolation). Both paths route through the same callTool() dispatcher, so there is no behavior drift.
+   * @returns true when native registration succeeded, false when it was skipped.
+   */
+  public async registerNativeTools(): Promise<boolean> {
+    const modelContext = document.modelContext;
+    if (!modelContext?.registerTool || typeof modelContext.registerTool !== 'function') {
+      return false;
+    }
+    for (const tool of WEBMCP_TOOLS) {
+      await modelContext.registerTool({
+        name: tool.name,
+        description: tool.description,
+        inputSchema: tool.inputSchema,
+        execute: args => this.callTool(tool.name, args as Record<string, unknown>),
+        annotations: { readOnlyHint: false, untrustedContentHint: true }
+      });
+    }
+    console.log('⚡ [WebMCP] Registered', WEBMCP_TOOLS.length, 'native tools via document.modelContext.registerTool');
+    return true;
   }
 
   public listTools(): WebMcpTool[] {

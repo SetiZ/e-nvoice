@@ -48,7 +48,7 @@ The XML embedded in generated PDFs uses the UN/CEFACT CII D16B standard namespac
 
 ## 4. WebMCP Tool Reference
 
-AI Assistants can call these tools from the browser context of `https://setiz.github.io/e-nvoice/` via the `window.mcp` API (e.g. `await window.mcp.callTool('generate_facturx_invoice', {...})`) or via `window.postMessage` JSON-RPC. Note: external AI platforms cannot invoke these tools directly over HTTP — they work only from the page itself.
+AI Assistants can call these tools from the browser context of `https://setiz.github.io/e-nvoice/` via the `window.mcp` API (e.g. `await window.mcp.callTool('generate_facturx_invoice', {...})`) or via `window.postMessage` JSON-RPC. Note: external AI platforms cannot invoke these tools directly over HTTP — they work only from the page itself. Where the browser exposes the native WebMCP API (`document.modelContext` — Chrome with origin isolation), the same tools are additionally registered via `document.modelContext.registerTool` and can be discovered and executed by WebMCP agents.
 
 1. `calculate_invoice_totals(items)`
    - Computes Net HT, VAT amounts per rate, and final TTC.
