@@ -125,7 +125,7 @@
           "Génération conforme Factur-X (Basic / EN 16931)",
           "Inclusion automatique des métadonnées XML UN/CEFACT CrossIndustryInvoice",
           "Traitement 100% local dans le navigateur (Zéro serveur)",
-          "API WebMCP (Beta) pour automatisation par agents IA",
+          "API WebMCP (Beta) - registration native document.modelContext.registerTool() + fallback postMessage pour l'automatisation par agents IA",
           "Factures 100% compatibles Chorus Pro (B2B/B2G 2026)"
         ]
       },
@@ -248,7 +248,7 @@
             "name": "Comment utiliser e-nvoice avec les assistants IA ?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "e-nvoice expose une API WebMCP dans le navigateur. Les assistants IA peuvent utiliser window.mcp.callTool() ou postMessage pour générer, valider ou calculer des factures. Compatible avec Claude, Gemini, ChatGPT, Mistral Vibe et autres."
+              "text": "e-nvoice expose une API WebMCP dans le navigateur. Les assistants IA peuvent utiliser window.mcp.callTool() ou postMessage pour générer, valider ou calculer des factures. Là où le navigateur le supporte (aperçu WebMCP + isolation d'origine), les outils sont aussi enregistrés nativement via document.modelContext.registerTool(). Compatible avec Claude, Gemini, ChatGPT, Mistral Vibe et autres."
             }
           }
         ]
