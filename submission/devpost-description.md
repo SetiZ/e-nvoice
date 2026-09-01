@@ -1,18 +1,21 @@
 # e-nvoice — WebMCP Devpost Submission
 
 **Project:** e-nvoice — Free client-side Factur-X / EN 16931 e-invoicing for the 2026 French mandate
+
 **Repo:** https://github.com/SetiZ/e-nvoice
+
 **License:** MIT
-**Languages:**
-- en: https://e-nvoice.pages.dev
-- fr: https://e-nvoice.pages.dev?lang=fr
+
+**Website:** https://e-nvoice.pages.dev
+
 **Demo video:** https://youtu.be/ACmM6lG64Z0
 
 ---
 
 ## Inspiration
 
-In 2026 every French business must emit electronic invoices, but "compliant" means getting EN 16931, CIUS-FR, French legal mentions, and VAT edge cases right — the kind of tedious work tools force a human to do. We wanted an instant, private generator, and with WebMCP we could let an *agent* do it inside the user's own tab.
+In September 2026, every French business must emit electronic invoices. As my wife is a freelancer, I wanted to first understand the rules and requirements. Then I looked what was available for freelancers to generate invoices. I found that most of the available tools were either too complex or too expensive. So I decided to build a free, client-side tool that could generate Factur-X / EN 16931 invoices.
+Apart from creating a compliant invoice, the main part of the tool would be to connect it to a platform like Chorus Pro, but I didn't work on that, I only built the invoice generator and added a WebMCP API for it. So anyone can call my invoice generator through the WebMCP API and generate an invoice in a compliant way.
 
 ## What it does
 
@@ -20,20 +23,20 @@ e-nvoice is a free, 100% client-side app that generates Factur-X / EN 16931 invo
 
 ## How we built it
 
-React 19 + TypeScript + Vite; PDF via `jspdf`/`pdf-lib`, XML via a custom CII D16B builder. A single WebMCP dispatcher (`src/utils/webMcp.ts`) registers tools both natively (`document.modelContext.registerTool`) and via a `window.mcp`/postMessage fallback. Hosted on Cloudflare Pages with the origin-isolation headers native WebMCP requires, plus `mcp.json`, `openapi.json`, `llms.txt` for discoverability. MIT-licensed, open source.
+I started from scratch with a prompt trying to understand the new legislation and what the steps are to create a compliant invoice. Then I started to build the application using React 19 + TypeScript + Vite. I delegated the PDF and XML development to the AI, then I started looking into WebMCP and how to use it. I also added SEO, llm.txt and openapi.json to make it discoverable by AI agents.
 
-## Challenges we ran into
+## Challenges I ran into
 
-WebMCP is brand new: `document.modelContext` only exists in flag-enabled, origin-isolated Chrome, so we had to set COOP/COEP headers exactly right and verify everything in a real flag-enabled browser. Serverless also means ChatGPT Actions, Claude.ai, and Gemini can't reach us cross-origin — so we documented honest workarounds instead of overpromising. And compliance itself was depth work: the French legal mentions and CIUS rules, not the PDF, took most of the effort.
+WebMCP is brand new: `document.modelContext` only exists in flag-enabled, origin-isolated Chrome. I just started the implementation thinking that it would be handled eventually. At first I deployed the website on github pages, but then entering this context, I realized that it was not the right move, so I moved it to cloudflare pages. Then I let the AI analyze what I needed to do to make it work. I am still not sure it works perfectly.
 
-## Accomplishments that we're proud of
+## Accomplishments that I'm proud of
 
-A complete, validated Factur-X generator that runs 100% offline in a browser tab, with nothing leaving the machine. Four WebMCP tools verified end to end: native `getTools()` lists all four and `executeTool()` returns correct totals in real Chrome. The full loop works — validate against EN 16931 + CIUS-FR, compute HT → VAT → TTC, download the PDF/A-3 — and it's fully open source.
+A complete, validated Factur-X generator that runs 100% offline in a browser tab, with nothing leaving the machine. That was my main goal. The WebMCP tools were a bonus to provide a different way to interact with the application and to make it discoverable by AI agents. The full loop works — validate against EN 16931 + CIUS-FR, compute HT → VAT → TTC, download the PDF/A-3 — and it's fully open source.
 
-## What we learned
+## What I learned
 
-Client-side agent integration flips the architecture: the agent comes to the page, not the page to the agent, so building a robust `window.mcp` layer with native registration as a progressive enhancement is what makes this work today. In a compliance product, the regulation is the real work. And WebMCP is young — keep a fallback always on.
+I first learned about this new legislation, what are the requirements to create a compliant invoice, how to validate an invoice,  and how to generate the PDF/A-3. Then, I started looking into WebMCP and how to use it. I also added SEO, llm.txt and openapi.json to make it discoverable by AI agents. In a compliance product, the regulation is the real work. And WebMCP is young — keep a fallback always on.
 
 ## What's next for E-nvoice
 
-The gaps we deliberately left open: PAdES e-signature for public-market invoices Chorus Pro requires, UBL and full EN 16931 profiles, a local MCP server for desktop clients, direct Chorus Pro / PDP submission, and CSV/scan import into validated invoices. The four WebMCP tools stay identical, so agent workflows built today keep working.
+Right now no idea. I might find a way to integrate with Chorus Pro or other platforms. I am also interested in the WebMCP project and how to use it to create more tools and applications.
