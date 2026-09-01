@@ -35,7 +35,7 @@ Prêt pour la **réforme française 2026 de la facturation électronique B2B**, 
 | Outil | Description |
 | :--- | :--- |
 | `calculate_invoice_totals` | Calcule les sous-totaux HT, montants de TVA et total TTC à partir des lignes de facturation. |
-| `validate_invoice_data` | Vérifie la présence des champs obligatoires (SIRET, TVA, dates, lignes) selon la norme EN 16931. |
+| `validate_invoice_data` | Vérifie la présence des champs obligatoires (SIRET ou tax ID étranger pour le B2B, TVA, dates, lignes) selon la norme EN 16931. |
 | `generate_facturx_xml` | Génère le flux XML brut UN/CEFACT CrossIndustryInvoice v100. |
 | `generate_facturx_invoice` | Déclenche la création et le téléchargement du fichier PDF/A-3 hybride Factur-X. |
 
@@ -85,7 +85,7 @@ Les fichiers générés par e-nvoice peuvent être transmis via :
 | Outil | Description | Paramètres |
 | :--- | :--- | :--- |
 | `calculate_invoice_totals` | Calcule HT, TVA et TTC à partir des lignes | `items: Array<{quantity, unitPrice, vatRate}>` |
-| `validate_invoice_data` | Vérifie les champs obligatoires EN 16931 | `number, date, sellerName, buyerName, itemCount` |
+| `validate_invoice_data` | Vérifie les champs obligatoires EN 16931 | `number, date, seller: {name, siret}, buyer: {name, siret}, buyerType, items` |
 | `generate_facturx_xml` | Génère le XML UN/CEFACT brut | `invoice: Invoice` |
 | `generate_facturx_invoice` | Génère et télécharge le PDF Factur-X | `invoice: Invoice, lang: 'fr'/'en'` |
 
@@ -106,6 +106,8 @@ Les fichiers générés par e-nvoice peuvent être transmis via :
 
 > ❓ **Pourquoi Chrome DevTools > Application > WebMCP ne montre pas les outils ?**
 > Chrome's WebMCP viewer affiche uniquement les serveurs MCP **enregistrés avec Chrome** (via `chrome://settings/ai`). L'API `window.mcp` d'e-nvoice est une implémentation **custom** qui n'apparaît pas dans cette section. C'est normal en développement local.
+
+> ✨ **WebMCP natif Chrome** : e-nvoice enregistre également ses outils via l'API WebMCP native de Chrome (`document.modelContext.registerTool`), ce qui leur permet d'apparaître dans l'inspecteur WebMCP et d'être découverts par les agents Chrome. Cette fonctionnalité est **automatique et progressive** : elle s'active uniquement lorsque le navigateur expose `document.modelContext` (Chrome + isolation d'origine), et bascule en silence sur l'API `window.mcp` sinon.
 
 ### 📖 Méthodes Fonctionnelles
 

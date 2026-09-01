@@ -1,4 +1,5 @@
-import type { Invoice } from '../types.ts';
+import type { Invoice, Party, BuyerType, OperationType } from '../types.ts';
+import { validateInvoiceData } from './invoiceValidation.ts';
 
 type GenerateFacturXFn = (invoice: Invoice, lang?: 'en' | 'fr') => Promise<void>;
 type GenerateFacturXXmlFn = (invoice: Invoice) => string;
@@ -58,11 +59,34 @@ export const WEBMCP_TOOLS: WebMcpTool[] = [
       properties: {
         number: { type: 'string' },
         date: { type: 'string' },
-        sellerName: { type: 'string' },
-        buyerName: { type: 'string' },
-        itemCount: { type: 'number' }
+        seller: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            siret: { type: 'string' },
+            vatNumber: { type: 'string' },
+            iban: { type: 'string' },
+            bic: { type: 'string' },
+            bankName: { type: 'string' }
+          },
+          required: ['name']
+        },
+        buyer: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            siret: { type: 'string' },
+            vatNumber: { type: 'string' },
+            taxId: { type: 'string' }
+          },
+          required: ['name']
+        },
+        buyerType: { type: 'string', enum: ['business', 'individual'] },
+        currency: { type: 'string', enum: ['EUR', 'USD', 'GBP', 'CHF'] },
+        operationType: { type: 'string', enum: ['services', 'goods', 'mixed'] },
+        items: { type: 'array' }
       },
-      required: ['number', 'date', 'sellerName', 'buyerName']
+      required: ['number', 'date', 'seller', 'buyer', 'items']
     }
   },
   {
@@ -82,10 +106,18 @@ export const WEBMCP_TOOLS: WebMcpTool[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        invoice: { type: 'object' },
+        number: { type: 'string' },
+        date: { type: 'string' },
+        dueDate: { type: 'string' },
+        currency: { type: 'string', enum: ['EUR', 'USD', 'GBP', 'CHF'] },
+        buyerType: { type: 'string', enum: ['business', 'individual'] },
+        operationType: { type: 'string', enum: ['services', 'goods', 'mixed'] },
+        seller: { type: 'object' },
+        buyer: { type: 'object' },
+        items: { type: 'array' },
         lang: { type: 'string', enum: ['fr', 'en'] }
       },
-      required: ['invoice']
+      required: ['number', 'date', 'seller', 'buyer', 'items']
     }
   }
 ];
@@ -115,6 +147,41 @@ export class WebMcpServer {
 
     this.isInitialized = true;
     console.log('⚡ [WebMCP] Client-side MCP Server initialized. Available tools:', WEBMCP_TOOLS.map(t => t.name));
+
+    // Best-effort native WebMCP registration (progressive enhancement).
+    // No-ops when unavailable (non-Chrome, missing origin isolation / origin trial).
+    void this.registerNativeTools();
+  }
+
+  /**
+   * Registers tools via the native WebMCP Imperative API (document.modelContext.registerTool).
+   * This is a progressive enhancement on top of the custom window.mcp / JSON-RPC layer and is
+   * only active where the browser exposes document.modelContext (Chrome origin trial + origin
+   * isolation). Both paths route through the same callTool() dispatcher, so there is no behavior drift.
+   * @returns true when native registration succeeded, false when it was skipped.
+   */
+  public async registerNativeTools(): Promise<boolean> {
+    const modelContext = document.modelContext;
+    if (!modelContext?.registerTool || typeof modelContext.registerTool !== 'function') {
+      return false;
+    }
+    let registered = 0;
+    for (const tool of WEBMCP_TOOLS) {
+      try {
+        await modelContext.registerTool({
+          name: tool.name,
+          description: tool.description,
+          inputSchema: tool.inputSchema,
+          execute: args => this.callTool(tool.name, args as Record<string, unknown>),
+          annotations: { readOnlyHint: false, untrustedContentHint: true }
+        });
+        registered++;
+      } catch (err) {
+        console.warn(`[WebMCP] Failed to register native tool "${tool.name}"`, err);
+      }
+    }
+    console.log('⚡ [WebMCP] Registered', registered, 'native tools via document.modelContext.registerTool');
+    return true;
   }
 
   public listTools(): WebMcpTool[] {
@@ -133,22 +200,7 @@ export class WebMcpServer {
       }
 
       case 'validate_invoice_data': {
-        const errors: string[] = [];
-        if (!args.number) errors.push('Invoice number is missing.');
-        if (!args.date) errors.push('Invoice issue date is missing.');
-        if (!args.sellerName) errors.push('Seller company name is required.');
-        if (!args.buyerName) errors.push('Buyer company/client name is required.');
-        if (args.buyerType === 'business' && args.buyerCountry === 'FR' && !args.buyerSiret) {
-          errors.push('Buyer SIREN/SIRET is required for French B2B invoices.');
-        }
-        if (typeof args.itemCount === 'number' && args.itemCount <= 0) {
-          errors.push('At least one line item is required.');
-        }
-        return {
-          valid: errors.length === 0,
-          errors,
-          compliantStandard: 'EN 16931 / Factur-X / CIUS-FR'
-        };
+        return validateInvoiceData(args);
       }
 
       case 'generate_facturx_xml': {
@@ -159,7 +211,29 @@ export class WebMcpServer {
       }
 
       case 'generate_facturx_invoice': {
-        const invoice = args.invoice as Invoice;
+        let invoice: Invoice;
+        if (args.invoice) {
+          invoice = args.invoice as Invoice;
+        } else {
+          invoice = {
+            number: args.number as string,
+            date: args.date as string,
+            dueDate: (args.dueDate as string) || (args.date as string),
+            currency: (args.currency as string) || 'EUR',
+            buyerType: (args.buyerType as BuyerType) || 'business',
+            operationType: (args.operationType as OperationType) || 'services',
+            seller: args.seller as Party,
+            buyer: args.buyer as Party,
+            items: ((args.items as Array<Record<string, unknown>>) || []).map((item, i) => ({
+              id: String(i + 1),
+              description: String(item.description || ''),
+              quantity: Number(item.quantity) || 0,
+              unitPrice: Number(item.unitPrice) || 0,
+              vatRate: Number(item.vatRate) || 0,
+              unitCode: item.unitCode as string | undefined
+            }))
+          };
+        }
         const lang = (args.lang || 'fr') as 'fr' | 'en';
         const generateFacturX = await getGenerateFacturX();
         await generateFacturX(invoice, lang);
@@ -202,6 +276,12 @@ export class WebMcpServer {
           error: { code: -32603, message }
         }, { targetOrigin: event.origin === 'null' ? '*' : event.origin });
       }
+    } else {
+      event.source?.postMessage({
+        jsonrpc: '2.0',
+        id,
+        error: { code: -32601, message: `Method not found: ${method}` }
+      }, { targetOrigin: event.origin === 'null' ? '*' : event.origin });
     }
   }
 }
