@@ -1,7 +1,7 @@
 {
   "name": "e-nvoice WebMCP Server",
   "description": "Browser-native WebMCP server for creating and validating Factur-X / EN 16931 invoices",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "protocolVersion": "2024-11-05",
   "transport": "window.postMessage",
   "nativeRegistration": "document.modelContext.registerTool is attempted where the browser supports it (WebMCP origin trial + origin isolation); window.postMessage remains the always-working fallback on hosts without those headers (e.g. GitHub Pages).",
@@ -24,7 +24,7 @@
               "required": ["quantity", "unitPrice", "vatRate"]
             }
           },
-          "currency": { "type": "string", "enum": ["EUR", "USD", "GBP", "CHF"] }
+          "currency": { "type": "string", "enum": ["EUR", "USD", "GBP", "CHF"], "default": "EUR" }
         },
         "required": ["items"]
       }
