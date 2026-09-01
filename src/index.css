@@ -716,6 +716,15 @@ input::placeholder, textarea::placeholder {
 }
 
 /* Responsive */
+@media (min-width: 1025px) {
+  .preview-section {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+}
+
 @media (max-width: 1024px) {
   .app-container {
     flex-direction: column;
