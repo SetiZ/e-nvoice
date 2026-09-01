@@ -28,7 +28,7 @@ Prêt pour la **réforme française 2026 de la facturation électronique B2B**, 
 
 ## 🤖 WebMCP (Model Context Protocol)
 
-**e-nvoice** expose une API **WebMCP** disponible directement dans la fenêtre du navigateur (`window.mcp`) ainsi qu'un écouteur JSON-RPC 2.0 via `window.postMessage`.
+**e-nvoice** expose une API **WebMCP** disponible directement dans la fenêtre du navigateur (`window.mcp`) ainsi qu'un écouteur JSON-RPC 2.0 via `window.postMessage`. Là où le navigateur expose l'API native (`document.modelContext` — Chrome isolé à l'origine / origin trial), les outils sont aussi enregistrés via `document.modelContext.registerTool` ; `window.postMessage` reste la voie de repli toujours fonctionnelle.
 
 ### Outils Disponibles pour les Agents IA :
 

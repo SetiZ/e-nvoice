@@ -9,9 +9,9 @@ const initWebMcp = async () => {
   WebMcpServer.getInstance().init();
 };
 
-// Initialize WebMCP asynchronously after the app loads
-// This prevents it from blocking the main thread during initial render
-setTimeout(initWebMcp, 0);
+// Initialize WebMCP asynchronously after the app loads.
+// init() imports no heavy PDF libs (those lazy-load on tool call), so this is near-synchronous.
+void initWebMcp();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
