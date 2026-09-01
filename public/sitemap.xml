@@ -2,12 +2,12 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://setiz.github.io/e-nvoice/</loc>
+    <loc>https://e-nvoice.pages.dev/</loc>
     <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://setiz.github.io/e-nvoice/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://setiz.github.io/e-nvoice/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://setiz.github.io/e-nvoice/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://e-nvoice.pages.dev/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://e-nvoice.pages.dev/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://e-nvoice.pages.dev/"/>
   </url>
 </urlset>

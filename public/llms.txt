@@ -13,7 +13,7 @@
 - **Chorus Pro Compatible**: Generated Factur-X PDFs can be uploaded directly to the French government Chorus Pro portal (`portail.chorus-pro.gouv.fr`).
 
 ## Summary Technical Specifications
-- Application URL: https://setiz.github.io/e-nvoice/
+- Application URL: https://e-nvoice.pages.dev/
 - Supported Profiles: Factur-X MINIMUM, BASIC, BASIC WL, EN 16931
 - Supported Currencies: EUR, USD, GBP, CHF
 - Underlying Formats: PDF/A-3 (ISO 19005-3), UN/CEFACT CII D16B XML
@@ -27,7 +27,7 @@
 - `generate_facturx_invoice`: Generates and triggers browser download of the complete Factur-X PDF/A-3 hybrid file.
 
 ## Key Links & Resources
-- Full LLM Specification: https://setiz.github.io/e-nvoice/llms-full.txt
-- OpenAPI Schema: https://setiz.github.io/e-nvoice/openapi.json
-- WebMCP Manifest: https://setiz.github.io/e-nvoice/.well-known/mcp.json
+- Full LLM Specification: https://e-nvoice.pages.dev/llms-full.txt
+- OpenAPI Schema: https://e-nvoice.pages.dev/openapi.json
+- WebMCP Manifest: https://e-nvoice.pages.dev/.well-known/mcp.json
 - Source Code: https://github.com/SetiZ/e-nvoice

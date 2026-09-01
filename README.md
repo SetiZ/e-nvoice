@@ -9,7 +9,7 @@
 
 Prêt pour la **réforme française 2026 de la facturation électronique B2B**, l'application fonctionne entièrement dans le navigateur sans envoyer aucune donnée financière sur un serveur distant.
 
-🌐 **Demo en ligne** : [https://setiz.github.io/e-nvoice/](https://setiz.github.io/e-nvoice/)
+🌐 **Demo en ligne** : [https://e-nvoice.pages.dev/](https://e-nvoice.pages.dev/)
 
 ---
 

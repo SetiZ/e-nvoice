@@ -14,7 +14,7 @@
   },
   "servers": [
     {
-      "url": "https://setiz.github.io/e-nvoice",
+      "url": "https://e-nvoice.pages.dev",
       "description": "GitHub Pages Static Server - Access API via window.mcp in browser"
     }
   ],

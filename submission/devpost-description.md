@@ -4,8 +4,8 @@
 **Repo:** https://github.com/SetiZ/e-nvoice
 **License:** MIT
 **Languages:**
-- en: https://{PAGES_URL}/
-- fr: https://{PAGES_URL}/?lang=fr
+- en: https://e-nvoice.pages.dev
+- fr: https://e-nvoice.pages.dev?lang=fr
 **Demo video:** <Paste public YouTube link here>
 
 ---
@@ -64,6 +64,6 @@ A single-page React/Vite app with no backend:
 
 - Source: https://github.com/SetiZ/e-nvoice
 - License: MIT
-- WebMCP manifest: https://{PAGES_URL}/.well-known/mcp.json
-- OpenAPI: https://{PAGES_URL}/openapi.json
-- Website: https://{PAGES_URL}/
+- WebMCP manifest: https://e-nvoice.pages.dev.well-known/mcp.json
+- OpenAPI: https://e-nvoice.pages.devopenapi.json
+- Website: https://e-nvoice.pages.dev

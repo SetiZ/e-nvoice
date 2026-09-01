@@ -1,7 +1,7 @@
 # e-nvoice — Demo Video Script (AI-narrated, English, ~2:30)
 
 **Target link:** <Paste YouTube link here>
-**Recorded against:** https://{PAGES_URL}/ (Cloudflare Pages — origin-isolated WebMCP)
+**Recorded against:** https://e-nvoice.pages.dev/ (Cloudflare Pages — origin-isolated WebMCP)
 **Tool:** local Node/Playwright + ffmpeg screenshot→MP4 pipeline (AI TTS narration)
 
 ---
