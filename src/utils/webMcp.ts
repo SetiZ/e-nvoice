@@ -35,6 +35,7 @@ export const WEBMCP_TOOLS: WebMcpTool[] = [
     inputSchema: {
       type: 'object',
       properties: {
+        currency: { type: 'string', enum: ['EUR', 'USD', 'GBP', 'CHF'], default: 'EUR' },
         items: {
           type: 'array',
           items: {
@@ -112,9 +113,42 @@ export const WEBMCP_TOOLS: WebMcpTool[] = [
         currency: { type: 'string', enum: ['EUR', 'USD', 'GBP', 'CHF'] },
         buyerType: { type: 'string', enum: ['business', 'individual'] },
         operationType: { type: 'string', enum: ['services', 'goods', 'mixed'] },
-        seller: { type: 'object' },
-        buyer: { type: 'object' },
-        items: { type: 'array' },
+        seller: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            siret: { type: 'string' },
+            vatNumber: { type: 'string' },
+            iban: { type: 'string' },
+            bic: { type: 'string' },
+            bankName: { type: 'string' }
+          },
+          required: ['name']
+        },
+        buyer: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            siret: { type: 'string' },
+            vatNumber: { type: 'string' },
+            taxId: { type: 'string' }
+          },
+          required: ['name']
+        },
+        items: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              description: { type: 'string' },
+              quantity: { type: 'number' },
+              unitPrice: { type: 'number' },
+              vatRate: { type: 'number' },
+              unitCode: { type: 'string' }
+            },
+            required: ['description', 'quantity', 'unitPrice', 'vatRate']
+          }
+        },
         lang: { type: 'string', enum: ['fr', 'en'] }
       },
       required: ['number', 'date', 'seller', 'buyer', 'items']
