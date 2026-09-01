@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "test": "tsc --ignoreConfig src/utils/invoiceValidation.ts scripts/validate_invoice.test.ts --target es2023 --module es2022 --moduleResolution bundler --rewriteRelativeImportExtensions --erasableSyntaxOnly --types node --rootDir . --outDir .test-dist && node .test-dist/scripts/validate_invoice.test.js && rm -rf .test-dist",
     "preview": "vite preview"
   },
   "dependencies": {
