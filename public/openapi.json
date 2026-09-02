@@ -60,7 +60,6 @@
           "dueDate": { "type": "string", "format": "date", "description": "Payment due date" },
           "currency": { "type": "string", "enum": ["EUR", "USD", "GBP", "CHF"], "default": "EUR", "description": "Invoice currency code" },
           "buyerType": { "type": "string", "enum": ["business", "individual"], "default": "business", "description": "Client type (B2B vs B2C)" },
-          "operationType": { "type": "string", "enum": ["services", "goods", "mixed"], "default": "services", "description": "Operation category" },
           "vatOnDebits": { "type": "boolean", "description": "VAT on debits option" },
           "paymentTermsText": { "type": "string", "description": "Payment terms" },
           "latePenaltiesText": { "type": "string", "description": "Late payment penalties mention" },
