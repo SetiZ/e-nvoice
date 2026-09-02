@@ -5,8 +5,8 @@ import App from './App.tsx'
 
 // Lazy load WebMCP server to defer heavy imports
 const initWebMcp = async () => {
-  const { WebMcpServer } = await import('./utils/webMcp.ts');
-  WebMcpServer.getInstance().init();
+  const { getWebMcpServer } = await import('./utils/webMcp.ts');
+  getWebMcpServer().init();
 };
 
 // Initialize WebMCP asynchronously after the app loads.

@@ -61,7 +61,6 @@
           },
           "buyerType": { "type": "string", "enum": ["business", "individual"] },
           "currency": { "type": "string", "enum": ["EUR", "USD", "GBP", "CHF"] },
-          "operationType": { "type": "string", "enum": ["services", "goods", "mixed"] },
           "items": {
             "type": "array"
           }
@@ -80,7 +79,6 @@
           "dueDate": { "type": "string" },
           "currency": { "type": "string", "enum": ["EUR", "USD", "GBP", "CHF"] },
           "buyerType": { "type": "string", "enum": ["business", "individual"] },
-          "operationType": { "type": "string", "enum": ["services", "goods", "mixed"] },
           "seller": {
             "type": "object",
             "properties": {

@@ -1,16 +1,13 @@
 import { jsPDF } from 'jspdf';
 import type { Invoice } from '../types.ts';
 import { generateFacturXXml } from './facturx.ts';
+import { calculateSubtotal, calculateVat, calculateTotal } from './calc.ts';
 import { translations, type Language } from '../i18n.ts';
 
 export async function generateFacturX(invoice: Invoice, lang: Language = 'en') {
   const t = translations[lang];
   const currency = invoice.currency || 'EUR';
   const currencySymbol = currency === 'EUR' ? 'EUR' : currency;
-
-  const calculateSubtotal = () => invoice.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
-  const calculateVat = () => invoice.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice * (item.vatRate / 100)), 0);
-  const calculateTotal = () => calculateSubtotal() + calculateVat();
 
   // 1. Generate PDF
   const doc = new jsPDF();
@@ -103,17 +100,17 @@ export async function generateFacturX(invoice: Invoice, lang: Language = 'en') {
 
   // Totals
   doc.text(`${t.subtotalExclVat}:`, 150, yPos, { align: 'right' });
-  doc.text(`${calculateSubtotal().toFixed(2)} ${currencySymbol}`, 185, yPos, { align: 'right' });
+  doc.text(`${calculateSubtotal(invoice.items).toFixed(2)} ${currencySymbol}`, 185, yPos, { align: 'right' });
   yPos += 6;
   
   doc.text(`${t.vatAmount}:`, 150, yPos, { align: 'right' });
-  doc.text(`${calculateVat().toFixed(2)} ${currencySymbol}`, 185, yPos, { align: 'right' });
+  doc.text(`${calculateVat(invoice.items).toFixed(2)} ${currencySymbol}`, 185, yPos, { align: 'right' });
   yPos += 8;
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);
   doc.text(`${t.totalAmountDue}:`, 150, yPos, { align: 'right' });
-  doc.text(`${calculateTotal().toFixed(2)} ${currencySymbol}`, 185, yPos, { align: 'right' });
+  doc.text(`${calculateTotal(invoice.items).toFixed(2)} ${currencySymbol}`, 185, yPos, { align: 'right' });
 
   yPos += 16;
 
@@ -261,16 +258,12 @@ export async function generateFacturX(invoice: Invoice, lang: Language = 'en') {
   const modifiedPdfBlob = new Blob([modifiedPdfBytes as unknown as BlobPart], { type: 'application/pdf' });
 
   // 5. Trigger Download
-  const downloadFile = (blob: Blob, filename: string) => {
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
-
-  downloadFile(modifiedPdfBlob, `${invoice.number}_factur-x.pdf`);
+  const url = URL.createObjectURL(modifiedPdfBlob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${invoice.number}_factur-x.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
