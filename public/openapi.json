@@ -3,7 +3,7 @@
   "info": {
     "title": "e-nvoice Factur-X Generator & Validator API (Beta)",
     "description": "Client-side WebMCP API for generating and validating Factur-X / EN 16931 electronic invoices. Note: This is a client-side only API accessible via window.mcp in the browser. External HTTP calls will not work.",
-    "version": "1.1.2",
+    "version": "1.2.0",
     "contact": {
       "name": "e-nvoice",
       "url": "https://github.com/SetiZ/e-nvoice"
