@@ -228,15 +228,13 @@ function App() {
                 <input id="seller-zip" type="text" value={invoice.seller.zip} onChange={e => handleSellerChange('zip', e.target.value)} />
               </div>
             </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="seller-country">{t.country}</label>
-                <input id="seller-country" type="text" value={invoice.seller.country || 'FR'} onChange={e => handleSellerChange('country', e.target.value)} />
-              </div>
-              <div className="form-group">
-                <label htmlFor="seller-siret">{t.siret}</label>
-                <input id="seller-siret" type="text" value={invoice.seller.siret || ''} onChange={e => handleSellerChange('siret', e.target.value)} />
-              </div>
+            <div className="form-group">
+              <label htmlFor="seller-country">{t.country}</label>
+              <input id="seller-country" type="text" value={invoice.seller.country || 'FR'} onChange={e => handleSellerChange('country', e.target.value)} />
+            </div>
+            <div className="form-group">
+              <label htmlFor="seller-siret">{t.siret}</label>
+              <input id="seller-siret" type="text" value={invoice.seller.siret || ''} onChange={e => handleSellerChange('siret', e.target.value)} />
             </div>
             <div className="form-group">
               <label htmlFor="seller-vat">{t.vatNumber}</label>
@@ -265,24 +263,22 @@ function App() {
 
           {/* Buyer Details */}
           <div className="glass-card">
-            <div className="flex-between mb-4">
-              <h2>{t.buyerTitle}</h2>
-              <div className="segmented-control" role="group" aria-label="Buyer Type">
-                <button
-                  type="button"
-                  className={invoice.buyerType === 'business' ? 'active' : ''}
-                  onClick={() => handleInvoiceChange('buyerType', 'business')}
-                >
-                  <Building2 size={14} style={{ display: 'inline', marginRight: 4 }} /> {t.b2b}
-                </button>
-                <button
-                  type="button"
-                  className={invoice.buyerType === 'individual' ? 'active' : ''}
-                  onClick={() => handleInvoiceChange('buyerType', 'individual')}
-                >
-                  <User size={14} style={{ display: 'inline', marginRight: 4 }} /> {t.b2c}
-                </button>
-              </div>
+            <h2>{t.buyerTitle}</h2>
+            <div className="segmented-control mb-4" role="group" aria-label="Buyer Type">
+              <button
+                type="button"
+                className={invoice.buyerType === 'business' ? 'active' : ''}
+                onClick={() => handleInvoiceChange('buyerType', 'business')}
+              >
+                <Building2 size={14} style={{ display: 'inline', marginRight: 4 }} /> {t.b2b}
+              </button>
+              <button
+                type="button"
+                className={invoice.buyerType === 'individual' ? 'active' : ''}
+                onClick={() => handleInvoiceChange('buyerType', 'individual')}
+              >
+                <User size={14} style={{ display: 'inline', marginRight: 4 }} /> {t.b2c}
+              </button>
             </div>
 
             <div className="form-group">
@@ -311,15 +307,13 @@ function App() {
             {/* B2B specific fields */}
             {invoice.buyerType === 'business' && (
               <>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="buyer-siret">{t.siret}</label>
-                    <input id="buyer-siret" type="text" value={invoice.buyer.siret || ''} onChange={e => handleBuyerChange('siret', e.target.value)} placeholder="French 14-digit SIRET" />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="buyer-vat">{t.vatNumber}</label>
-                    <input id="buyer-vat" type="text" value={invoice.buyer.vatNumber || ''} onChange={e => handleBuyerChange('vatNumber', e.target.value)} placeholder="Intra-community VAT" />
-                  </div>
+                <div className="form-group">
+                  <label htmlFor="buyer-siret">{t.siret}</label>
+                  <input id="buyer-siret" type="text" value={invoice.buyer.siret || ''} onChange={e => handleBuyerChange('siret', e.target.value)} placeholder="French 14-digit SIRET" />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="buyer-vat">{t.vatNumber}</label>
+                  <input id="buyer-vat" type="text" value={invoice.buyer.vatNumber || ''} onChange={e => handleBuyerChange('vatNumber', e.target.value)} placeholder="Intra-community VAT" />
                 </div>
                 {invoice.buyer.country && invoice.buyer.country !== 'FR' && (
                   <div className="form-group">
