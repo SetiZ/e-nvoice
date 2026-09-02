@@ -3,8 +3,6 @@ import type { Invoice } from '../types.ts';
 export function generateFacturXXml(invoice: Invoice): string {
   const currency = invoice.currency || 'EUR';
   const calculateSubtotal = () => invoice.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
-  const calculateVat = () => invoice.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice * (item.vatRate / 100)), 0);
-  const calculateTotal = () => calculateSubtotal() + calculateVat();
 
   const formattedDate = invoice.date.replace(/-/g, '');
   const formattedDueDate = invoice.dueDate.replace(/-/g, '');
@@ -20,11 +18,61 @@ export function generateFacturXXml(invoice: Invoice): string {
 
   const termsDescription = termsParts.join(' | ');
 
+  const vatBreakdown = invoice.items.reduce((map, item) => {
+    const prev = map.get(item.vatRate) ?? { basis: 0, amount: 0 };
+    const net = item.quantity * item.unitPrice;
+    map.set(item.vatRate, {
+      basis: prev.basis + net,
+      amount: prev.amount + net * (item.vatRate / 100),
+    });
+    return map;
+  }, new Map<number, { basis: number; amount: number }>());
+  const taxTotal = [...vatBreakdown.values()].reduce((sum, group) => sum + Number(group.amount.toFixed(2)), 0);
+
+  const lineItems = invoice.items.map((item, index) => `
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>${index + 1}</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:Name>${item.description || 'Article'}</ram:Name>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>${item.unitPrice.toFixed(2)}</ram:ChargeAmount>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="${item.unitCode || 'C62'}">${item.quantity}</ram:BilledQuantity>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>${item.vatRate === 0 ? 'E' : 'S'}</ram:CategoryCode>
+          <ram:RateApplicablePercent>${item.vatRate}</ram:RateApplicablePercent>
+          ${item.vatRate === 0 && invoice.vatExemptionReason ? `<ram:ExemptionReason>${invoice.vatExemptionReason}</ram:ExemptionReason>` : ''}
+        </ram:ApplicableTradeTax>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>${(item.quantity * item.unitPrice).toFixed(2)}</ram:LineTotalAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>`).join('');
+
+  const vatBreakdownXml = [...vatBreakdown.entries()].map(([rate, group]) => `
+    <ram:ApplicableTradeTax>
+      <ram:CalculatedAmount>${group.amount.toFixed(2)}</ram:CalculatedAmount>
+      <ram:TypeCode>VAT</ram:TypeCode>
+      ${rate === 0 && invoice.vatExemptionReason ? `<ram:ExemptionReason>${invoice.vatExemptionReason}</ram:ExemptionReason>` : ''}
+      <ram:BasisAmount>${group.basis.toFixed(2)}</ram:BasisAmount>
+      <ram:CategoryCode>${rate === 0 ? 'E' : 'S'}</ram:CategoryCode>
+      <ram:RateApplicablePercent>${rate}</ram:RateApplicablePercent>
+    </ram:ApplicableTradeTax>`).join('');
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
   <rsm:ExchangedDocumentContext>
     <ram:GuidelineSpecifiedDocumentContextParameter>
-      <ram:ID>urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:en16931:1p0</ram:ID>
+      <ram:ID>urn:cen.eu:en16931:2017</ram:ID>
     </ram:GuidelineSpecifiedDocumentContextParameter>
   </rsm:ExchangedDocumentContext>
   <rsm:ExchangedDocument>
@@ -35,6 +83,7 @@ export function generateFacturXXml(invoice: Invoice): string {
     </ram:IssueDateTime>
   </rsm:ExchangedDocument>
   <rsm:SupplyChainTradeTransaction>
+    ${lineItems}
     <ram:ApplicableHeaderTradeAgreement>
       <ram:SellerTradeParty>
         <ram:Name>${invoice.seller.name}</ram:Name>
@@ -96,6 +145,7 @@ export function generateFacturXXml(invoice: Invoice): string {
           <ram:BICID>${invoice.seller.bic.replace(/\s+/g, '')}</ram:BICID>
         </ram:PayeeSpecifiedCreditorFinancialInstitution>` : ''}
       </ram:SpecifiedTradeSettlementPaymentMeans>
+      ${vatBreakdownXml}
       <ram:SpecifiedTradePaymentTerms>
         ${termsDescription ? `<ram:Description>${termsDescription}</ram:Description>` : ''}
         <ram:DueDateDateTime>
@@ -105,39 +155,11 @@ export function generateFacturXXml(invoice: Invoice): string {
       <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
         <ram:LineTotalAmount>${calculateSubtotal().toFixed(2)}</ram:LineTotalAmount>
         <ram:TaxBasisTotalAmount>${calculateSubtotal().toFixed(2)}</ram:TaxBasisTotalAmount>
-        <ram:TaxTotalAmount currencyID="${currency}">${calculateVat().toFixed(2)}</ram:TaxTotalAmount>
-        <ram:GrandTotalAmount>${calculateTotal().toFixed(2)}</ram:GrandTotalAmount>
-        <ram:DuePayableAmount>${calculateTotal().toFixed(2)}</ram:DuePayableAmount>
+        <ram:TaxTotalAmount currencyID="${currency}">${taxTotal.toFixed(2)}</ram:TaxTotalAmount>
+        <ram:GrandTotalAmount>${(calculateSubtotal() + taxTotal).toFixed(2)}</ram:GrandTotalAmount>
+        <ram:DuePayableAmount>${(calculateSubtotal() + taxTotal).toFixed(2)}</ram:DuePayableAmount>
       </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
     </ram:ApplicableHeaderTradeSettlement>
-    ${invoice.items.map((item, index) => `
-    <ram:IncludedSupplyChainTradeLineItem>
-      <ram:AssociatedDocumentLineDocument>
-        <ram:LineID>${index + 1}</ram:LineID>
-      </ram:AssociatedDocumentLineDocument>
-      <ram:SpecifiedTradeProduct>
-        <ram:Name>${item.description || 'Article'}</ram:Name>
-      </ram:SpecifiedTradeProduct>
-      <ram:SpecifiedLineTradeAgreement>
-        <ram:NetPriceProductTradePrice>
-          <ram:ChargeAmount>${item.unitPrice.toFixed(2)}</ram:ChargeAmount>
-        </ram:NetPriceProductTradePrice>
-      </ram:SpecifiedLineTradeAgreement>
-      <ram:SpecifiedLineTradeDelivery>
-        <ram:BilledQuantity unitCode="${item.unitCode || 'C62'}">${item.quantity}</ram:BilledQuantity>
-      </ram:SpecifiedLineTradeDelivery>
-      <ram:SpecifiedLineTradeSettlement>
-        <ram:ApplicableTradeTax>
-          <ram:TypeCode>VAT</ram:TypeCode>
-          <ram:CategoryCode>${item.vatRate === 0 ? 'E' : 'S'}</ram:CategoryCode>
-          <ram:RateApplicablePercent>${item.vatRate}</ram:RateApplicablePercent>
-          ${item.vatRate === 0 && invoice.vatExemptionReason ? `<ram:ExemptionReason>${invoice.vatExemptionReason}</ram:ExemptionReason>` : ''}
-        </ram:ApplicableTradeTax>
-        <ram:SpecifiedTradeSettlementLineMonetarySummation>
-          <ram:LineTotalAmount>${(item.quantity * item.unitPrice).toFixed(2)}</ram:LineTotalAmount>
-        </ram:SpecifiedTradeSettlementLineMonetarySummation>
-      </ram:SpecifiedLineTradeSettlement>
-    </ram:IncludedSupplyChainTradeLineItem>`).join('')}
   </rsm:SupplyChainTradeTransaction>
 </rsm:CrossIndustryInvoice>`;
 
