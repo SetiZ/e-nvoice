@@ -1,4 +1,4 @@
-import type { Invoice, Party, BuyerType, OperationType } from '../types.ts';
+import type { Invoice, Party, BuyerType } from '../types.ts';
 import { validateInvoiceData } from './invoiceValidation.ts';
 
 type GenerateFacturXFn = (invoice: Invoice, lang?: 'en' | 'fr') => Promise<void>;
@@ -84,7 +84,6 @@ export const WEBMCP_TOOLS: WebMcpTool[] = [
         },
         buyerType: { type: 'string', enum: ['business', 'individual'] },
         currency: { type: 'string', enum: ['EUR', 'USD', 'GBP', 'CHF'] },
-        operationType: { type: 'string', enum: ['services', 'goods', 'mixed'] },
         items: { type: 'array' }
       },
       required: ['number', 'date', 'seller', 'buyer', 'items']
@@ -112,7 +111,6 @@ export const WEBMCP_TOOLS: WebMcpTool[] = [
         dueDate: { type: 'string' },
         currency: { type: 'string', enum: ['EUR', 'USD', 'GBP', 'CHF'] },
         buyerType: { type: 'string', enum: ['business', 'individual'] },
-        operationType: { type: 'string', enum: ['services', 'goods', 'mixed'] },
         seller: {
           type: 'object',
           properties: {
@@ -157,15 +155,7 @@ export const WEBMCP_TOOLS: WebMcpTool[] = [
 ];
 
 export class WebMcpServer {
-  private static instance: WebMcpServer | null = null;
   private isInitialized = false;
-
-  public static getInstance(): WebMcpServer {
-    if (!WebMcpServer.instance) {
-      WebMcpServer.instance = new WebMcpServer();
-    }
-    return WebMcpServer.instance;
-  }
 
   public init() {
     if (this.isInitialized || typeof window === 'undefined') return;
@@ -255,7 +245,6 @@ export class WebMcpServer {
             dueDate: (args.dueDate as string) || (args.date as string),
             currency: (args.currency as string) || 'EUR',
             buyerType: (args.buyerType as BuyerType) || 'business',
-            operationType: (args.operationType as OperationType) || 'services',
             seller: args.seller as Party,
             buyer: args.buyer as Party,
             items: ((args.items as Array<Record<string, unknown>>) || []).map((item, i) => ({
@@ -318,4 +307,10 @@ export class WebMcpServer {
       }, { targetOrigin: event.origin === 'null' ? '*' : event.origin });
     }
   }
+}
+
+let webMcpServer: WebMcpServer | null = null;
+export function getWebMcpServer(): WebMcpServer {
+  if (!webMcpServer) webMcpServer = new WebMcpServer();
+  return webMcpServer;
 }

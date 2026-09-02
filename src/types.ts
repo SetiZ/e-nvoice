@@ -22,7 +22,6 @@ export interface LineItem {
 }
 
 export type BuyerType = 'business' | 'individual';
-export type OperationType = 'services' | 'goods' | 'mixed';
 
 export interface Invoice {
   number: string;
@@ -30,7 +29,6 @@ export interface Invoice {
   dueDate: string;
   currency: string; // EUR, USD, GBP, CHF
   buyerType: BuyerType; // B2B vs B2C (particulier)
-  operationType: OperationType; // Prestation de services / Vente de biens / Mixte
   vatOnDebits?: boolean; // Option pour le paiement de la taxe d'après les débits
   paymentTermsText?: string; // E.g., 'Paiement à 30 jours'
   latePenaltiesText?: string; // E.g., 'Taux des pénalités : 3 fois le taux légal'

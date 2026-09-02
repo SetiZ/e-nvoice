@@ -1,8 +1,8 @@
 import type { Invoice } from '../types.ts';
+import { calculateSubtotal } from './calc.ts';
 
 export function generateFacturXXml(invoice: Invoice): string {
   const currency = invoice.currency || 'EUR';
-  const calculateSubtotal = () => invoice.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
 
   const formattedDate = invoice.date.replace(/-/g, '');
   const formattedDueDate = invoice.dueDate.replace(/-/g, '');
@@ -153,11 +153,11 @@ export function generateFacturXXml(invoice: Invoice): string {
         </ram:DueDateDateTime>
       </ram:SpecifiedTradePaymentTerms>
       <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
-        <ram:LineTotalAmount>${calculateSubtotal().toFixed(2)}</ram:LineTotalAmount>
-        <ram:TaxBasisTotalAmount>${calculateSubtotal().toFixed(2)}</ram:TaxBasisTotalAmount>
+        <ram:LineTotalAmount>${calculateSubtotal(invoice.items).toFixed(2)}</ram:LineTotalAmount>
+        <ram:TaxBasisTotalAmount>${calculateSubtotal(invoice.items).toFixed(2)}</ram:TaxBasisTotalAmount>
         <ram:TaxTotalAmount currencyID="${currency}">${taxTotal.toFixed(2)}</ram:TaxTotalAmount>
-        <ram:GrandTotalAmount>${(calculateSubtotal() + taxTotal).toFixed(2)}</ram:GrandTotalAmount>
-        <ram:DuePayableAmount>${(calculateSubtotal() + taxTotal).toFixed(2)}</ram:DuePayableAmount>
+        <ram:GrandTotalAmount>${(calculateSubtotal(invoice.items) + taxTotal).toFixed(2)}</ram:GrandTotalAmount>
+        <ram:DuePayableAmount>${(calculateSubtotal(invoice.items) + taxTotal).toFixed(2)}</ram:DuePayableAmount>
       </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
     </ram:ApplicableHeaderTradeSettlement>
   </rsm:SupplyChainTradeTransaction>

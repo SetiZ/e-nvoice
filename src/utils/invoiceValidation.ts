@@ -1,10 +1,4 @@
-export interface ValidateInvoiceResult {
-  valid: boolean;
-  errors: string[];
-  compliantStandard: string;
-}
-
-export function validateInvoiceData(args: Record<string, unknown>): ValidateInvoiceResult {
+export function validateInvoiceData(args: Record<string, unknown>): { valid: boolean; errors: string[]; compliantStandard: string } {
   const errors: string[] = [];
   const seller = (args.seller || {}) as Record<string, unknown>;
   const buyer = (args.buyer || {}) as Record<string, unknown>;

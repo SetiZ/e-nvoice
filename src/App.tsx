@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, Trash2, Download, CheckCircle, Globe, Cpu, HelpCircle, Building2, User, Landmark, ShieldCheck } from 'lucide-react';
-import type { Invoice, Party, LineItem, BuyerType, OperationType } from './types.ts';
+import type { Invoice, Party, LineItem } from './types.ts';
+import { calculateSubtotal, calculateVat, calculateTotal } from './utils/calc.ts';
 import { translations, type Language } from './i18n.ts';
 import { WEBMCP_TOOLS } from './utils/webMcp.ts';
 import './index.css';
@@ -32,7 +33,6 @@ function App() {
     dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     currency: 'EUR',
     buyerType: 'business',
-    operationType: 'services',
     vatOnDebits: false,
     paymentTermsText: 'Paiement à 30 jours',
     latePenaltiesText: '3 fois le taux d\'intérêt légal',
@@ -63,17 +63,15 @@ function App() {
   const [lang, setLang] = useState<Language>('fr');
   const t = translations[lang];
 
-  const getCurrencySymbol = (curr: string) => {
-    switch (curr) {
+  const currSymbol = (() => {
+    switch (invoice.currency || 'EUR') {
       case 'EUR': return '€';
       case 'USD': return '$';
       case 'GBP': return '£';
       case 'CHF': return 'CHF';
-      default: return curr;
+      default: return invoice.currency || 'EUR';
     }
-  };
-
-  const currSymbol = getCurrencySymbol(invoice.currency || 'EUR');
+  })();
 
   const handleSellerChange = (field: keyof Party, value: string) => {
     setInvoice(prev => ({ ...prev, seller: { ...prev.seller, [field]: value } }));
@@ -107,12 +105,6 @@ function App() {
       items: prev.items.map(item => item.id === id ? { ...item, [field]: value } : item)
     }));
   };
-
-  const calculateSubtotal = () => invoice.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
-
-  const calculateVat = () => invoice.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice * (item.vatRate / 100)), 0);
-
-  const calculateTotal = () => calculateSubtotal() + calculateVat();
 
   const hasZeroVat = invoice.items.some(item => item.vatRate === 0);
 
@@ -210,18 +202,6 @@ function App() {
                 <option value="CHF">CHF - Swiss Franc</option>
               </select>
             </div>
-            <div className="form-group">
-              <label htmlFor="invoice-op-type">{t.operationType}</label>
-              <select
-                id="invoice-op-type"
-                value={invoice.operationType || 'services'}
-                onChange={e => handleInvoiceChange('operationType', e.target.value as OperationType)}
-              >
-                <option value="services">{t.services}</option>
-                <option value="goods">{t.goods}</option>
-                <option value="mixed">{t.mixed}</option>
-              </select>
-            </div>
           </div>
         </div>
 
@@ -291,14 +271,14 @@ function App() {
                 <button
                   type="button"
                   className={invoice.buyerType === 'business' ? 'active' : ''}
-                  onClick={() => handleInvoiceChange('buyerType', 'business' as BuyerType)}
+                  onClick={() => handleInvoiceChange('buyerType', 'business')}
                 >
                   <Building2 size={14} style={{ display: 'inline', marginRight: 4 }} /> {t.b2b}
                 </button>
                 <button
                   type="button"
                   className={invoice.buyerType === 'individual' ? 'active' : ''}
-                  onClick={() => handleInvoiceChange('buyerType', 'individual' as BuyerType)}
+                  onClick={() => handleInvoiceChange('buyerType', 'individual')}
                 >
                   <User size={14} style={{ display: 'inline', marginRight: 4 }} /> {t.b2c}
                 </button>
@@ -875,15 +855,15 @@ console.log(result);`}
           <div className="invoice-totals">
             <div className="total-row">
               <span>{t.subtotalExclVat}</span>
-              <span>{calculateSubtotal().toFixed(2)} {currSymbol}</span>
+              <span>{calculateSubtotal(invoice.items).toFixed(2)} {currSymbol}</span>
             </div>
             <div className="total-row">
               <span>{t.vatAmount}</span>
-              <span>{calculateVat().toFixed(2)} {currSymbol}</span>
+              <span>{calculateVat(invoice.items).toFixed(2)} {currSymbol}</span>
             </div>
             <div className="total-row grand-total">
               <span>{t.totalAmountDue}</span>
-              <span>{calculateTotal().toFixed(2)} {currSymbol}</span>
+              <span>{calculateTotal(invoice.items).toFixed(2)} {currSymbol}</span>
             </div>
           </div>
 
