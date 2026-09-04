@@ -41,34 +41,28 @@ Prêt pour la **réforme française 2026 de la facturation électronique B2B**, 
 
 ---
 
-## 🇫🇷 Compatibilité Chorus Pro
+## 🇫🇷 Compatibilité Chorus Pro & Marchés Publics (B2G)
 
-**e-nvoice génère des factures 100% compatibles avec [Chorus Pro](https://chorus-pro.gouv.fr/)** , la plateforme officielle française pour la facturation électronique B2G et B2B obligatoire à partir de **2026**.
+**e-nvoice génère des factures 100% compatibles avec [Chorus Pro](https://portail.chorus-pro.gouv.fr/)**, la plateforme gouvernementale française pour la facturation des entités publiques (ministères, collectivités, hôpitaux, universités).
 
-### ✅ Ce qui fonctionne :
-- Format **Factur-X / EN 16931** acceptés par Chorus Pro
-- PDF/A-3 hybride avec XML UN/CEFACT CrossIndustryInvoice intégré
-- Conforme au profil **CIUS** (Core Invoice Usage Specification) requis
+### ✅ Ce qui est intégré :
+- Format **Factur-X / EN 16931** (PDF/A-3 hybride avec XML UN/CEFACT D16B).
+- **Numéro d'Engagement Juridique (EJ) / Bon de commande** : encodé dans `<ram:BuyerOrderReferencedDocument><ram:IssuerAssignedID>` (BT-13).
+- **Code Service Exécutant** : encodé dans `<ram:BuyerTradeParty><ram:DefinedTradeContact><ram:DepartmentName>` (BT-10).
+- **Guide interactif dans l'application** : accessible via le bouton `🏛️ Chorus Pro` avec tutoriel en 5 étapes et liste anti-rejet.
+- **Feuille de route API** : consultez [`CHORUS_PRO_INTEGRATION_PLAN.md`](./CHORUS_PRO_INTEGRATION_PLAN.md) pour le plan d'automatisation via proxy Cloudflare Worker et API PISTE.
 
 ### 📥 Comment déposer sur Chorus Pro :
+1. Renseignez votre facture avec le SIRET de l'administration publique, l'EJ et le Code Service.
+2. Téléchargez le PDF Factur-X généré par e-nvoice.
+3. Connectez-vous sur [portail.chorus-pro.gouv.fr](https://portail.chorus-pro.gouv.fr).
+4. Rendez-vous dans **"Factures émises"** → **"Déposer une facture"** et choisissez **"Fichier structuré / mixte (Factur-X)"**.
+5. Déposez votre fichier : toutes les données comptables, lignes et références sont extraites instantanément par Chorus Pro !
 
-**Méthode 1 : Dépôt manuel (Portail Web)**
-1. Générez votre facture Factur-X avec e-nvoice
-2. Connectez-vous à [https://portail.chorus-pro.gouv.fr](https://portail.chorus-pro.gouv.fr)
-3. Sélectionnez **"Déposer une facture"** → **"Fichier structuré (Factur-X/UBL)"**
-4. Téléchargez le fichier PDF généré par e-nvoice
-5. Complétez les métadonnées et validez
-
-**Méthode 2 : Transmission automatique (EDI/API)**
-Les fichiers générés par e-nvoice peuvent être transmis via :
-- L'API Chorus Pro (nécessite un compte Piste/Flux)
-- Votre solution PDP (Plateforme de Dématérialisation Partenaire) existante
-- Logiciels comptables compatibles (Sage, Ciel, QuickBooks, etc.)
-
-### ⚠️ Points de vigilance :
-- Vérifiez que le **SIRET** et le **numéro de TVA intracommunautaire** sont correctement renseignés
-- Chorus Pro requiert un **numéro de facture unique** (champ obligatoire)
-- Les factures doivent être signées électroniquement pour certains marchés publics (e-nvoice ne gère pas encore la signature)
+### 💡 Conseils Anti-Rejet :
+- **Engagement Juridique (EJ)** : demandez toujours ce numéro à votre contact administratif avant facturation.
+- **Code Service** : indispensable pour les structures comportant plusieurs services comptables (hôpitaux, rectorats, ministères).
+- Déposez toujours en mode **"Fichier structuré (Factur-X)"** pour déclencher la validation automatique instantanée.
 
 ---
 

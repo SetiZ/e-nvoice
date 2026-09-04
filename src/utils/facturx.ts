@@ -122,7 +122,15 @@ export function generateFacturXXml(invoice: Invoice): string {
         <ram:SpecifiedTaxRegistration>
           <ram:ID schemeID="FC">${invoice.buyer.taxId.replace(/\s+/g, '')}</ram:ID>
         </ram:SpecifiedTaxRegistration>` : ''}
+        ${invoice.serviceCode ? `
+        <ram:DefinedTradeContact>
+          <ram:DepartmentName>${invoice.serviceCode.trim()}</ram:DepartmentName>
+        </ram:DefinedTradeContact>` : ''}
       </ram:BuyerTradeParty>
+      ${invoice.purchaseOrder ? `
+      <ram:BuyerOrderReferencedDocument>
+        <ram:IssuerAssignedID>${invoice.purchaseOrder.trim()}</ram:IssuerAssignedID>
+      </ram:BuyerOrderReferencedDocument>` : ''}
     </ram:ApplicableHeaderTradeAgreement>
     <ram:ApplicableHeaderTradeDelivery>
       <ram:ActualDeliverySupplyChainEvent>

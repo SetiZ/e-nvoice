@@ -58,6 +58,7 @@ function App() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showWebMcpModal, setShowWebMcpModal] = useState(false);
   const [showFaqModal, setShowFaqModal] = useState(false);
+  const [showChorusProModal, setShowChorusProModal] = useState(false);
   const [activeWebMcpTab, setActiveWebMcpTab] = useState<'tools' | 'connect'>('tools');
   const [activePlatform, setActivePlatform] = useState<'universal' | 'postmessage' | 'chrome'>('universal');
   const [lang, setLang] = useState<Language>('fr');
@@ -127,46 +128,62 @@ function App() {
       <main className="app-container">
         {/* Form Section */}
         <div className="form-section">
-        <div className="glass-card mb-4 flex-between">
-          <div>
+        <div className="glass-card mb-4 header-card">
+          <div className="header-title-area">
             <h1>{t.createInvoice}</h1>
             <p className="text-secondary">{t.fillDetails}</p>
           </div>
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <button
-              className="btn btn-secondary"
-              onClick={() => setShowWebMcpModal(!showWebMcpModal)}
-              title={t.webMcpTooltip}
-              style={{ color: '#93c5fd', borderColor: '#93c5fd' }}
-              aria-label={t.webMcpTooltip}
-            >
-              <Cpu size={18} /> WebMCP
-            </button>
-            <button
-              className="btn btn-secondary"
-              onClick={() => setShowFaqModal(!showFaqModal)}
-              title={lang === 'fr' ? 'Foire Aux Questions' : 'Frequently Asked Questions'}
-              style={{ color: '#fde047', borderColor: '#fde047' }}
-              aria-label={lang === 'fr' ? 'Foire Aux Questions' : 'Frequently Asked Questions'}
-            >
-              <HelpCircle size={18} /> {lang === 'fr' ? 'FAQ' : 'FAQ'}
-            </button>
-            <button
-              className="btn btn-secondary"
-              onClick={() => setLang(lang === 'en' ? 'fr' : 'en')}
-              aria-label={lang === 'fr' ? 'Changer la langue en anglais' : 'Switch language to French'}
-            >
-              <Globe size={18} /> {lang.toUpperCase()}
-            </button>
-            <button
-              className="btn btn-primary"
-              onClick={handleGenerate}
-              disabled={isGenerating}
-              aria-label={isGenerating ? t.generating : t.generateFacturX}
-            >
-              {isGenerating ? <div className="loader"></div> : <Download size={18} />}
-              {t.generateFacturX}
-            </button>
+          <div className="header-actions">
+            <div className="header-group tools-group" role="group" aria-label="Tools and Guides">
+              <button
+                className="btn btn-secondary header-tool-btn"
+                onClick={() => setShowChorusProModal(!showChorusProModal)}
+                title={t.chorusProGuide}
+                aria-label={t.chorusProGuide}
+              >
+                <Landmark size={17} className="tool-icon-emerald" />
+                <span className="btn-label">{t.chorusPro}</span>
+              </button>
+              <button
+                className="btn btn-secondary header-tool-btn"
+                onClick={() => setShowFaqModal(!showFaqModal)}
+                title={lang === 'fr' ? 'Foire Aux Questions' : 'Frequently Asked Questions'}
+                aria-label={lang === 'fr' ? 'Foire Aux Questions' : 'Frequently Asked Questions'}
+              >
+                <HelpCircle size={17} className="tool-icon-amber" />
+                <span className="btn-label">FAQ</span>
+              </button>
+              <button
+                className="btn btn-secondary header-tool-btn"
+                onClick={() => setShowWebMcpModal(!showWebMcpModal)}
+                title={t.webMcpTooltip}
+                aria-label={t.webMcpTooltip}
+              >
+                <Cpu size={17} className="tool-icon-blue" />
+                <span className="btn-label">WebMCP</span>
+              </button>
+            </div>
+
+            <div className="header-group cta-group" role="group" aria-label="Actions">
+              <button
+                className="btn btn-secondary lang-toggle-btn"
+                onClick={() => setLang(lang === 'en' ? 'fr' : 'en')}
+                aria-label={lang === 'fr' ? 'Changer la langue en anglais' : 'Switch language to French'}
+                title={lang === 'fr' ? 'Passer en anglais' : 'Switch to French'}
+              >
+                <Globe size={17} />
+                <span>{lang.toUpperCase()}</span>
+              </button>
+              <button
+                className="btn btn-primary generate-cta-btn"
+                onClick={handleGenerate}
+                disabled={isGenerating}
+                aria-label={isGenerating ? t.generating : t.generateFacturX}
+              >
+                {isGenerating ? <div className="loader"></div> : <Download size={18} />}
+                <span>{t.generateFacturX}</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -218,19 +235,19 @@ function App() {
               <label htmlFor="seller-address">{t.address}</label>
               <input id="seller-address" type="text" value={invoice.seller.address} onChange={e => handleSellerChange('address', e.target.value)} />
             </div>
+            <div className="form-group">
+              <label htmlFor="seller-city">{t.city}</label>
+              <input id="seller-city" type="text" value={invoice.seller.city} onChange={e => handleSellerChange('city', e.target.value)} />
+            </div>
             <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="seller-city">{t.city}</label>
-                <input id="seller-city" type="text" value={invoice.seller.city} onChange={e => handleSellerChange('city', e.target.value)} />
-              </div>
               <div className="form-group">
                 <label htmlFor="seller-zip">{t.zip}</label>
                 <input id="seller-zip" type="text" value={invoice.seller.zip} onChange={e => handleSellerChange('zip', e.target.value)} />
               </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="seller-country">{t.country}</label>
-              <input id="seller-country" type="text" value={invoice.seller.country || 'FR'} onChange={e => handleSellerChange('country', e.target.value)} />
+              <div className="form-group">
+                <label htmlFor="seller-country">{t.country}</label>
+                <input id="seller-country" type="text" value={invoice.seller.country || 'FR'} onChange={e => handleSellerChange('country', e.target.value)} />
+              </div>
             </div>
             <div className="form-group">
               <label htmlFor="seller-siret">{t.siret}</label>
@@ -289,19 +306,19 @@ function App() {
               <label htmlFor="buyer-address">{t.address}</label>
               <input id="buyer-address" type="text" value={invoice.buyer.address} onChange={e => handleBuyerChange('address', e.target.value)} />
             </div>
+            <div className="form-group">
+              <label htmlFor="buyer-city">{t.city}</label>
+              <input id="buyer-city" type="text" value={invoice.buyer.city} onChange={e => handleBuyerChange('city', e.target.value)} />
+            </div>
             <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="buyer-city">{t.city}</label>
-                <input id="buyer-city" type="text" value={invoice.buyer.city} onChange={e => handleBuyerChange('city', e.target.value)} />
-              </div>
               <div className="form-group">
                 <label htmlFor="buyer-zip">{t.zip}</label>
                 <input id="buyer-zip" type="text" value={invoice.buyer.zip} onChange={e => handleBuyerChange('zip', e.target.value)} />
               </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="buyer-country">{t.country}</label>
-              <input id="buyer-country" type="text" value={invoice.buyer.country || 'FR'} onChange={e => handleBuyerChange('country', e.target.value)} placeholder="FR, DE, US, GB..." />
+              <div className="form-group">
+                <label htmlFor="buyer-country">{t.country}</label>
+                <input id="buyer-country" type="text" value={invoice.buyer.country || 'FR'} onChange={e => handleBuyerChange('country', e.target.value)} placeholder="FR, DE, US, GB..." />
+              </div>
             </div>
 
             {/* B2B specific fields */}
@@ -322,6 +339,25 @@ function App() {
                   </div>
                 )}
               </>
+            )}
+
+            {/* Chorus Pro / B2G optional fields */}
+            {invoice.buyerType === 'business' && (
+              <details className="chorus-pro-details" style={{ marginTop: '1rem' }}>
+                <summary style={{ cursor: 'pointer', color: '#34d399', fontWeight: 600, fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Landmark size={16} /> {t.chorusProSection}
+                </summary>
+                <div style={{ marginTop: '0.75rem' }}>
+                  <div className="form-group">
+                    <label htmlFor="purchase-order">{t.purchaseOrder}</label>
+                    <input id="purchase-order" type="text" value={invoice.purchaseOrder || ''} onChange={e => handleInvoiceChange('purchaseOrder', e.target.value)} placeholder={t.purchaseOrderPlaceholder} />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="service-code">{t.serviceCode}</label>
+                    <input id="service-code" type="text" value={invoice.serviceCode || ''} onChange={e => handleInvoiceChange('serviceCode', e.target.value)} placeholder={t.serviceCodePlaceholder} />
+                  </div>
+                </div>
+              </details>
             )}
           </div>
         </div>
@@ -778,6 +814,90 @@ console.log(result);`}
           </div>
         )}
 
+        {/* Chorus Pro Modal */}
+        {showChorusProModal && (
+          <div className="modal-backdrop" onClick={() => setShowChorusProModal(false)} role="dialog" aria-modal="true" aria-labelledby="chorus-modal-title">
+            <div className="modal-container chorus-modal-container" onClick={e => e.stopPropagation()}>
+              <div className="flex-between mb-4">
+                <h3 id="chorus-modal-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#34d399' }}>
+                  <Landmark size={20} /> {t.chorusProModalTitle}
+                </h3>
+                <button className="btn-icon" onClick={() => setShowChorusProModal(false)} aria-label={lang === 'fr' ? 'Fermer le guide Chorus Pro' : 'Close Chorus Pro Guide'}>✕</button>
+              </div>
+
+              <div className="chorus-modal-content">
+                <div className="chorus-steps-list">
+                  <div className="chorus-step-item">
+                    <div className="chorus-step-number">1</div>
+                    <div className="chorus-step-body">
+                      <h4>{t.chorusStep1Title}</h4>
+                      <p>{t.chorusStep1Desc}</p>
+                    </div>
+                  </div>
+
+                  <div className="chorus-step-item">
+                    <div className="chorus-step-number">2</div>
+                    <div className="chorus-step-body">
+                      <h4>{t.chorusStep2Title}</h4>
+                      <p>{t.chorusStep2Desc}</p>
+                      <a
+                        href="https://portail.chorus-pro.gouv.fr"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="chorus-portal-link"
+                      >
+                        portail.chorus-pro.gouv.fr ↗
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="chorus-step-item">
+                    <div className="chorus-step-number">3</div>
+                    <div className="chorus-step-body">
+                      <h4>{t.chorusStep3Title}</h4>
+                      <p>{t.chorusStep3Desc}</p>
+                    </div>
+                  </div>
+
+                  <div className="chorus-step-item">
+                    <div className="chorus-step-number">4</div>
+                    <div className="chorus-step-body">
+                      <h4>{t.chorusStep4Title}</h4>
+                      <p>{t.chorusStep4Desc}</p>
+                    </div>
+                  </div>
+
+                  <div className="chorus-step-item">
+                    <div className="chorus-step-number">5</div>
+                    <div className="chorus-step-body">
+                      <h4>{t.chorusStep5Title}</h4>
+                      <p>{t.chorusStep5Desc}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="chorus-tips-box">
+                  <h4>
+                    <ShieldCheck size={18} style={{ color: '#34d399', display: 'inline', verticalAlign: 'middle', marginRight: '6px' }} />
+                    {t.chorusTipsTitle}
+                  </h4>
+                  <ul>
+                    <li>{t.chorusTip1}</li>
+                    <li>{t.chorusTip2}</li>
+                    <li>{t.chorusTip3}</li>
+                  </ul>
+                </div>
+
+                <div style={{ marginTop: '1.25rem', textAlign: 'right' }}>
+                  <button className="btn btn-primary" onClick={() => setShowChorusProModal(false)}>
+                    {lang === 'fr' ? 'Compris !' : 'Got it!'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
 
       {/* Preview Section */}
@@ -794,6 +914,9 @@ console.log(result);`}
               <div><strong>{t.invoiceNumber}:</strong> {invoice.number}</div>
               <div><strong>{t.date}:</strong> {invoice.date}</div>
               <div><strong>{t.dueDate}:</strong> {invoice.dueDate}</div>
+              {invoice.purchaseOrder && (
+                <div><strong>{t.purchaseOrder}:</strong> {invoice.purchaseOrder}</div>
+              )}
             </div>
           </div>
 
@@ -819,6 +942,7 @@ console.log(result);`}
                 {invoice.buyerType === 'business' && invoice.buyer.siret && <div>{t.siret}: {invoice.buyer.siret}</div>}
                 {invoice.buyerType === 'business' && invoice.buyer.vatNumber && <div>{t.vatNumber}: {invoice.buyer.vatNumber}</div>}
                 {invoice.buyerType === 'business' && !invoice.buyer.vatNumber && invoice.buyer.taxId && <div>{t.taxId}: {invoice.buyer.taxId}</div>}
+                {invoice.buyerType === 'business' && invoice.serviceCode && <div>{t.serviceCode}: {invoice.serviceCode}</div>}
               </div>
             </div>
           </div>

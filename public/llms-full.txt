@@ -17,8 +17,11 @@ Beginning September 2026, all businesses established in France subject to VAT mu
    - Operation category: Prestations de services, Livraisons de biens, or Mixte.
    - Option for payment of VAT on debits (where applicable).
    - Statutory B2B payment terms: Due dates, late payment interest rate (3x legal rate), and mandatory 40 € lump-sum recovery fee (Art. D. 441-5 Code de commerce).
-   - Bank details (IBAN / BIC) embedded in structured XML (`ram:PayeePartyCreditorFinancialAccount`).
-5. **Chorus Pro & PDP Platform Submission**: Factur-X invoices can be submitted to Chorus Pro (`portail.chorus-pro.gouv.fr`) or Registered Dematerialization Platforms (PDP).
+5. **Chorus Pro (B2G) Compliance & Anti-Rejection Rules**:
+   - Invoicing French public bodies (State ministries, local authorities, public health establishments, universities) requires submission via Chorus Pro (`portail.chorus-pro.gouv.fr`).
+   - `e-nvoice` automatically embeds the **Numéro d'Engagement Juridique (EJ) / Purchase Order** into `<ram:BuyerOrderReferencedDocument><ram:IssuerAssignedID>` (BT-13) and the **Code Service Exécutant** into `<ram:BuyerTradeParty><ram:DefinedTradeContact><ram:DepartmentName>` (BT-10).
+   - When uploaded in *"Fichier structuré (Factur-X)"* mode on Chorus Pro, all invoice lines, tax bases, recipient SIRETs, and public accounting references are pre-populated instantly, avoiding rejections.
+6. **Chorus Pro & PDP Platform Submission**: Factur-X invoices can be submitted to Chorus Pro (`portail.chorus-pro.gouv.fr`) or Registered Dematerialization Platforms (PDP).
 
 ---
 
