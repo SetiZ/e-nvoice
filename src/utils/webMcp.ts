@@ -85,7 +85,7 @@ export const WEBMCP_TOOLS: WebMcpTool[] = [
         buyerType: { type: 'string', enum: ['business', 'individual'] },
         currency: { type: 'string', enum: ['EUR', 'USD', 'GBP', 'CHF'] },
         purchaseOrder: { type: 'string', description: 'Order / Commitment Ref (EJ) for French public sector / Chorus Pro (BT-13)' },
-        serviceCode: { type: 'string', description: 'Service Code for French public sector entities (BT-10)' },
+        serviceCode: { type: 'string', description: 'Service Code for French public sector entities (DefinedTradeContact/DepartmentName)' },
         items: { type: 'array' }
       },
       required: ['number', 'date', 'seller', 'buyer', 'items']
@@ -114,7 +114,7 @@ export const WEBMCP_TOOLS: WebMcpTool[] = [
         currency: { type: 'string', enum: ['EUR', 'USD', 'GBP', 'CHF'] },
         buyerType: { type: 'string', enum: ['business', 'individual'] },
         purchaseOrder: { type: 'string', description: 'Order / Commitment Ref (EJ) for French public sector / Chorus Pro (BT-13)' },
-        serviceCode: { type: 'string', description: 'Service Code for French public sector entities (BT-10)' },
+        serviceCode: { type: 'string', description: 'Service Code for French public sector entities (DefinedTradeContact/DepartmentName)' },
         seller: {
           type: 'object',
           properties: {

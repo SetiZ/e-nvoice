@@ -48,7 +48,7 @@ Prêt pour la **réforme française 2026 de la facturation électronique B2B**, 
 ### ✅ Ce qui est intégré :
 - Format **Factur-X / EN 16931** (PDF/A-3 hybride avec XML UN/CEFACT D16B).
 - **Numéro d'Engagement Juridique (EJ) / Bon de commande** : encodé dans `<ram:BuyerOrderReferencedDocument><ram:IssuerAssignedID>` (BT-13).
-- **Code Service Exécutant** : encodé dans `<ram:BuyerTradeParty><ram:DefinedTradeContact><ram:DepartmentName>` (BT-10).
+- **Code Service Exécutant** : encodé dans `<ram:BuyerTradeParty><ram:DefinedTradeContact><ram:DepartmentName>`.
 - **Guide interactif dans l'application** : accessible via le bouton `🏛️ Chorus Pro` avec tutoriel en 5 étapes et liste anti-rejet.
 - **Feuille de route API** : consultez [`CHORUS_PRO_INTEGRATION_PLAN.md`](./CHORUS_PRO_INTEGRATION_PLAN.md) pour le plan d'automatisation via proxy Cloudflare Worker et API PISTE.
 
