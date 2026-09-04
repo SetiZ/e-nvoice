@@ -27,6 +27,9 @@ export async function generateFacturX(invoice: Invoice, lang: Language = 'en') {
   doc.text(`${t.invoiceNumber}: ${invoice.number}`, 140, yPos - 5);
   doc.text(`${t.date}: ${invoice.date}`, 140, yPos);
   doc.text(`${t.dueDate}: ${invoice.dueDate}`, 140, yPos + 5);
+  if (invoice.purchaseOrder) {
+    doc.text(`${t.purchaseOrder}: ${invoice.purchaseOrder}`, 140, yPos + 10);
+  }
 
   yPos += 30;
 
@@ -58,7 +61,8 @@ export async function generateFacturX(invoice: Invoice, lang: Language = 'en') {
     `${invoice.buyer.zip} ${invoice.buyer.city} ${invoice.buyer.country || 'FR'}`,
     !isIndividual && invoice.buyer.siret ? `${t.siret}: ${invoice.buyer.siret}` : '',
     !isIndividual && invoice.buyer.vatNumber ? `${t.vatNumber}: ${invoice.buyer.vatNumber}` : '',
-    !isIndividual && !invoice.buyer.vatNumber && invoice.buyer.taxId ? `${t.taxId}: ${invoice.buyer.taxId}` : ''
+    !isIndividual && !invoice.buyer.vatNumber && invoice.buyer.taxId ? `${t.taxId}: ${invoice.buyer.taxId}` : '',
+    !isIndividual && invoice.serviceCode ? `${t.serviceCode}: ${invoice.serviceCode}` : ''
   ].filter(Boolean);
 
   const maxLines = Math.max(sellerLines.length, buyerLines.length);

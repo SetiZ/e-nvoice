@@ -10,7 +10,7 @@
 - **Bank Details & Payment Compliance**: Embeds IBAN/BIC in XML and PDF alongside statutory French B2B terms (due dates, late penalties, 40 € recovery fee, discount policies, VAT on debits).
 - **100% Client-Side Privacy**: Zero data sent to external servers. All PDF and XML rendering occurs locally inside the user's browser.
 - **WebMCP Integration (Beta)**: Exposes in-browser Model Context Protocol endpoints over `window.mcp` and `postMessage` for AI scripts and extensions.
-- **Chorus Pro Compatible**: Generated Factur-X PDFs can be uploaded directly to the French government Chorus Pro portal (`portail.chorus-pro.gouv.fr`).
+- **Chorus Pro (B2G) Compliance**: Direct compatibility with French public procurement (`portail.chorus-pro.gouv.fr`). Embeds Numéro d'Engagement Juridique / Purchase Order (BT-13) and Code Service Exécutant (`DefinedTradeContact/DepartmentName`) for instant automatic data extraction and zero-rejection processing.
 
 ## Summary Technical Specifications
 - Application URL: https://e-nvoice.pages.dev/
@@ -22,9 +22,9 @@
 
 ## AI Agent WebMCP Tools (`window.mcp.callTool()`)
 - `calculate_invoice_totals`: Calculates subtotal HT, VAT totals, and total TTC from invoice line items with dynamic currency.
-- `validate_invoice_data`: Validates mandatory fields (invoice number, date, seller/buyer names, SIRET or foreign Tax ID for B2B, VAT numbers, line items) against EN 16931 and CIUS-FR requirements.
-- `generate_facturx_xml`: Generates raw Factur-X / EN 16931 XML string (UN/CEFACT CrossIndustryInvoice D16B) with bank details and payment terms.
-- `generate_facturx_invoice`: Generates and triggers browser download of the complete Factur-X PDF/A-3 hybrid file.
+- `validate_invoice_data`: Validates mandatory fields (invoice number, date, seller/buyer names, SIRET or foreign Tax ID for B2B, VAT numbers, optional Chorus Pro EJ/service code, line items) against EN 16931 and CIUS-FR requirements.
+- `generate_facturx_xml`: Generates raw Factur-X / EN 16931 XML string (UN/CEFACT CrossIndustryInvoice D16B) with bank details, payment terms, and B2G Chorus Pro references.
+- `generate_facturx_invoice`: Generates and triggers browser download of the complete Factur-X PDF/A-3 hybrid file with embedded XML metadata and B2G fields.
 
 ## Key Links & Resources
 - Full LLM Specification: https://e-nvoice.pages.dev/llms-full.txt

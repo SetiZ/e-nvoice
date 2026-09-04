@@ -108,6 +108,10 @@ export function generateFacturXXml(invoice: Invoice): string {
         <ram:SpecifiedLegalOrganization>
           <ram:ID schemeID="0002">${invoice.buyer.siret.replace(/\s+/g, '')}</ram:ID>
         </ram:SpecifiedLegalOrganization>` : ''}
+        ${invoice.serviceCode ? `
+        <ram:DefinedTradeContact>
+          <ram:DepartmentName>${invoice.serviceCode.trim()}</ram:DepartmentName>
+        </ram:DefinedTradeContact>` : ''}
         <ram:PostalTradeAddress>
           <ram:PostcodeCode>${invoice.buyer.zip}</ram:PostcodeCode>
           <ram:LineOne>${invoice.buyer.address}</ram:LineOne>
@@ -123,6 +127,10 @@ export function generateFacturXXml(invoice: Invoice): string {
           <ram:ID schemeID="FC">${invoice.buyer.taxId.replace(/\s+/g, '')}</ram:ID>
         </ram:SpecifiedTaxRegistration>` : ''}
       </ram:BuyerTradeParty>
+      ${invoice.purchaseOrder ? `
+      <ram:BuyerOrderReferencedDocument>
+        <ram:IssuerAssignedID>${invoice.purchaseOrder.trim()}</ram:IssuerAssignedID>
+      </ram:BuyerOrderReferencedDocument>` : ''}
     </ram:ApplicableHeaderTradeAgreement>
     <ram:ApplicableHeaderTradeDelivery>
       <ram:ActualDeliverySupplyChainEvent>

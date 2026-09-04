@@ -84,6 +84,8 @@ export const WEBMCP_TOOLS: WebMcpTool[] = [
         },
         buyerType: { type: 'string', enum: ['business', 'individual'] },
         currency: { type: 'string', enum: ['EUR', 'USD', 'GBP', 'CHF'] },
+        purchaseOrder: { type: 'string', description: 'Order / Commitment Ref (EJ) for French public sector / Chorus Pro (BT-13)' },
+        serviceCode: { type: 'string', description: 'Service Code for French public sector entities (DefinedTradeContact/DepartmentName)' },
         items: { type: 'array' }
       },
       required: ['number', 'date', 'seller', 'buyer', 'items']
@@ -111,6 +113,8 @@ export const WEBMCP_TOOLS: WebMcpTool[] = [
         dueDate: { type: 'string' },
         currency: { type: 'string', enum: ['EUR', 'USD', 'GBP', 'CHF'] },
         buyerType: { type: 'string', enum: ['business', 'individual'] },
+        purchaseOrder: { type: 'string', description: 'Order / Commitment Ref (EJ) for French public sector / Chorus Pro (BT-13)' },
+        serviceCode: { type: 'string', description: 'Service Code for French public sector entities (DefinedTradeContact/DepartmentName)' },
         seller: {
           type: 'object',
           properties: {
@@ -245,6 +249,8 @@ export class WebMcpServer {
             dueDate: (args.dueDate as string) || (args.date as string),
             currency: (args.currency as string) || 'EUR',
             buyerType: (args.buyerType as BuyerType) || 'business',
+            purchaseOrder: args.purchaseOrder as string | undefined,
+            serviceCode: args.serviceCode as string | undefined,
             seller: args.seller as Party,
             buyer: args.buyer as Party,
             items: ((args.items as Array<Record<string, unknown>>) || []).map((item, i) => ({
