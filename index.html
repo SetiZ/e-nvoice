@@ -60,10 +60,13 @@
     content="Générez instantanément des factures électroniques conformes Factur-X (PDF/A-3 + XML). Gratuit, 100% confidentiel et exécuté localement dans votre navigateur." />
   <meta property="og:site_name" content="e-nvoice" />
   <meta property="og:locale" content="fr_FR" />
+  <!-- WebP first (29KB), PNG fallback (245KB) for older crawlers -->
+  <meta property="og:image" content="https://e-nvoice.pages.dev/og-image.webp" />
+  <meta property="og:image:type" content="image/webp" />
   <meta property="og:image" content="https://e-nvoice.pages.dev/og-image.png" />
+  <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:type" content="image/png" />
   <meta property="og:image:alt" content="e-nvoice - Générateur Gratuit Factur-X & EN 16931" />
 
   <!-- Twitter / X -->
@@ -72,7 +75,7 @@
   <meta property="twitter:title" content="e-nvoice - Générateur Gratuit Factur-X / EN 16931" />
   <meta property="twitter:description"
     content="Générez vos factures électroniques au format Factur-X (PDF/A-3 hybride). Client-side, gratuit et 100% confidentiel." />
-  <meta property="twitter:image" content="https://e-nvoice.pages.dev/og-image.png" />
+  <meta property="twitter:image" content="https://e-nvoice.pages.dev/og-image.webp" />
 
   <!-- Structured Data Graph (JSON-LD for SEO, AEO & GEO) -->
   <script type="application/ld+json">
@@ -102,8 +105,8 @@
         "@id": "https://e-nvoice.pages.dev/#webapp",
         "name": "e-nvoice",
         "url": "https://e-nvoice.pages.dev/",
-        "image": "https://e-nvoice.pages.dev/og-image.png",
-        "screenshot": "https://e-nvoice.pages.dev/og-image.png",
+        "image": "https://e-nvoice.pages.dev/og-image.webp",
+        "screenshot": "https://e-nvoice.pages.dev/og-image.webp",
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "All",
         "inLanguage": ["fr", "en"],
