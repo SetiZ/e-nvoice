@@ -11,8 +11,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Split WebMCP and invoice generation utilities
-          if (id.includes('webMcp.ts') || id.includes('facturx.ts')) {
+          // Split WebMCP utilities
+          if (id.includes('webMcp.ts')) {
             return 'webmcp-utils';
           }
           // Split React icons
