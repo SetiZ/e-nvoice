@@ -6,7 +6,7 @@ import { translations, type Language } from './i18n.ts';
 import { WEBMCP_TOOLS } from './utils/webMcp.ts';
 import './index.css';
 
-// Lazy load PDF generator - libraries will be in separate chunk
+// Lazy load PDF generator - libraries will be loaded only on demand
 const loadPdfGenerator = async () => {
   const { generateFacturX } = await import('./utils/pdfGenerator.ts');
   return generateFacturX;

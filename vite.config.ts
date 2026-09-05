@@ -7,33 +7,25 @@ export default defineConfig({
   base: './',
   build: {
     sourcemap: false,
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 800, // Lower threshold to catch large chunks
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Split PDF libraries into separate chunk loaded on demand
-          if (id.includes('jspdf')) {
-            return 'jspdf';
-          }
-          if (id.includes('pdf-lib')) {
-            return 'pdf-lib';
-          }
-          if (id.includes('html2canvas')) {
-            return 'html2canvas';
-          }
           // Split WebMCP and invoice generation utilities
           if (id.includes('webMcp.ts') || id.includes('facturx.ts')) {
             return 'webmcp-utils';
           }
-          // Split PDF generator
-          if (id.includes('pdfGenerator.ts') || id.includes('LazyPdfGenerator.tsx')) {
-            return 'pdf-generator';
+          // Split React icons
+          if (id.includes('lucide-react')) {
+            return 'lucide-icons';
           }
+          // Let Vite handle PDF libraries via natural code splitting
         },
         assetFileNames: 'assets/[name]-[hash][extname]',
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
       },
+
     },
     reportCompressedSize: true,
   },
