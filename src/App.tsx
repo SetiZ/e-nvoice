@@ -894,19 +894,19 @@ console.log(result);`}
             {t.footerAttribution}
           </a>
           <span style={{ opacity: 0.3 }}>|</span>
-          <a href="/e-nvoice/sitemap.xml" target="_blank" rel="noopener noreferrer" title="Sitemap XML">
+          <a href="/sitemap.xml" target="_blank" rel="noopener noreferrer" title="Sitemap XML">
             Sitemap
           </a>
           <span style={{ opacity: 0.3 }}>|</span>
-          <a href="/e-nvoice/llms.txt" target="_blank" rel="noopener noreferrer" title="AI & LLM Context Documentation">
+          <a href="/llms.txt" target="_blank" rel="noopener noreferrer" title="AI & LLM Context Documentation">
             llms.txt
           </a>
           <span style={{ opacity: 0.3 }}>|</span>
-          <a href="/e-nvoice/llms-full.txt" target="_blank" rel="noopener noreferrer" title="Full LLM Specification">
+          <a href="/llms-full.txt" target="_blank" rel="noopener noreferrer" title="Full LLM Specification">
             llms-full.txt
           </a>
           <span style={{ opacity: 0.3 }}>|</span>
-          <a href="/e-nvoice/openapi.json" target="_blank" rel="noopener noreferrer" title="OpenAPI Schema Specification">
+          <a href="/openapi.json" target="_blank" rel="noopener noreferrer" title="OpenAPI Schema Specification">
             OpenAPI Spec
           </a>
         </div>
