@@ -1,6 +1,4 @@
-import { jsPDF } from 'jspdf';
 import type { Invoice } from '../types.ts';
-import { generateFacturXXml } from './facturx.ts';
 import { calculateSubtotal, calculateVat, calculateTotal } from './calc.ts';
 import { translations, type Language } from '../i18n.ts';
 
@@ -8,6 +6,9 @@ export async function generateFacturX(invoice: Invoice, lang: Language = 'en') {
   const t = translations[lang];
   const currency = invoice.currency || 'EUR';
   const currencySymbol = currency === 'EUR' ? 'EUR' : currency;
+
+  // Dynamic import of jsPDF to enable lazy loading
+  const { jsPDF } = await import('jspdf');
 
   // 1. Generate PDF
   const doc = new jsPDF();
@@ -173,6 +174,7 @@ export async function generateFacturX(invoice: Invoice, lang: Language = 'en') {
   doc.text(t.facturxNote, margin, 287);
 
   // 2. Generate XML
+  const { generateFacturXXml } = await import('./facturx.ts');
   const xmlString = generateFacturXXml(invoice);
   const encoder = new TextEncoder();
   const xmlBytes = encoder.encode(xmlString);
