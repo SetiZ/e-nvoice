@@ -66,6 +66,8 @@
           "recoveryIndemnityText": { "type": "string", "description": "40 EUR statutory recovery fee" },
           "earlyDiscountText": { "type": "string", "description": "Early payment discount policy" },
           "vatExemptionReason": { "type": "string", "description": "Legal VAT exemption mention for 0% VAT" },
+          "purchaseOrder": { "type": "string", "description": "Numéro d'Engagement Juridique (EJ) / Purchase Order number for Chorus Pro / B2G (BT-13)" },
+          "serviceCode": { "type": "string", "description": "Code Service Exécutant for French public sector entities / Chorus Pro (DefinedTradeContact/DepartmentName)" },
           "seller": { "$ref": "#/components/schemas/Party" },
           "buyer": { "$ref": "#/components/schemas/Party" },
           "items": {

@@ -35,6 +35,8 @@ export interface Invoice {
   recoveryIndemnityText?: string; // E.g., 'Indemnité forfaitaire de recouvrement : 40 €'
   earlyDiscountText?: string; // E.g., 'Escompte pour paiement anticipé : néant'
   vatExemptionReason?: string; // E.g., 'TVA non applicable, art. 293 B du CGI' or 'Autoliquidation'
+  purchaseOrder?: string; // Chorus Pro / B2G: Numéro d'Engagement Juridique (EJ) ou Bon de commande
+  serviceCode?: string; // Chorus Pro / B2G: Code Service Exécutant (e.g. COMPTA, DSI)
   seller: Party;
   buyer: Party;
   items: LineItem[];
